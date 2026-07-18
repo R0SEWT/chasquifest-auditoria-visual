@@ -62,11 +62,14 @@ for caso in informe/figuras/gen_caso{1,2,3,4,5}.py; do
 done
 ```
 
-El PDF se compila desde `informe/` con una distribución de LaTeX que incluya `latexmk` y Biber:
+El PDF se compila desde `informe/` con una distribución de LaTeX que incluya pdfLaTeX y Biber:
 
 ```bash
 cd informe
-latexmk -pdf informe.tex
+pdflatex -interaction=nonstopmode -halt-on-error informe.tex
+biber informe
+pdflatex -interaction=nonstopmode -halt-on-error informe.tex
+pdflatex -interaction=nonstopmode -halt-on-error informe.tex
 ```
 
 ## Aviso
