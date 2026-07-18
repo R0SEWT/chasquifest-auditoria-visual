@@ -1,0 +1,105 @@
+\section{Caso 5 --- Killa, el algoritmo y el juicio final}\label{sec:caso5}
+
+\textbf{Afirmación bajo auditoría:} \emph{``Killa causó el boom: +108\% de ventas tras el video (15-abr), confirmado por un scatter vistas$\leftrightarrow$entradas con línea de tendencia''}. La tabla que sostiene esta afirmación tiene granularidad fecha$\times$sede (1\,464 filas = 122 días $\times$ 12 sedes, sin nulos, del 1-mar al 30-jun 2026); la campaña se divide en fase PRE (``Antes del video'', $n=540$) y fase POST (``Después del video'', $n=924$), con el video lanzado el 15-abr-2026. El titular ``+108\%'' ya tiene un primer problema de base de cálculo no declarada: sobre \texttt{ventas\_soles} la diferencia ingenua es +100.3\% (num$=7\,689.9-3\,839.6$, den$=3\,839.6$), no +108\%; el +108.2\% exacto (num$=225.25-108.21=117.04$, den$=108.21$) aparece recién al aplicar la misma cuenta sobre \texttt{entradas\_vendidas} (tickets). El dashboard mezcla soles y tickets sin decirlo --un problema independiente del problema de causalidad que se audita a continuación.
+
+\subsection{Pregunta 1 --- Explorar no es explicar}\label{ssec:c5-q1}
+
+\paragraph{Concepto técnico.} Un producto \emph{exploratorio} (muchos filtros, vistas alternativas, para que un analista busque patrones) y un producto \emph{explicativo} (una sola pregunta gobernando el diseño, para que un comité decida) responden a objetivos distintos. El dashboard de Killa tiene forma exploratoria --filtros de sobra, un scatter con línea de tendencia sin controles, una torta de vanidad-- pero se presenta como si ya respondiera la pregunta de negocio. Esa mezcla, no un detalle estético, es el problema de fondo.
+
+\paragraph{Evidencia.} El mockup ofrece filtros de \texttt{sede}, \texttt{ciudad}, \texttt{macrozona}, \texttt{fecha}, \texttt{lluvia}, \texttt{promo}, \texttt{fin de semana}, \texttt{canal}, \texttt{color favorito} y \texttt{horóscopo}; un scatter ``más vistas = más entradas'' que cruza \texttt{vistas\_video\_miles} con \texttt{entradas\_vendidas} sin particionar por \texttt{festival\_abierto\_flag}, \texttt{inversion\_publicitaria\_soles} ni \texttt{promocion\_activa\_flag} (al introducir esos controles la $R^2$ cruda cae de 0.283 a $\sim$0.040, sección~\ref{ssec:c5-q3}); y una torta ``¿quién ama más a Killa?'' que no responde ninguna pregunta operativa.
+
+\paragraph{Decisión.} Se retiran dos elementos de la entrega explicativa al comité: (1) los filtros de ``color favorito'' y ``horóscopo'', que no son variables de negocio ni existen en el CSV como impulsores de ventas y solo invitan a buscar un corte que ``confirme'' la historia; y (2) el scatter exploratorio vistas$\leftrightarrow$entradas con línea de tendencia, que induce a leer causalidad donde solo hay covariación con confusores comunes. Se reemplaza por la Figura~\ref{fig:c5-q3} (cruda vs. parcial), honesta sobre la incertidumbre. La torta ``¿quién ama más a Killa?'' también se retira: es un indicador social, no de negocio. La pregunta única que debe gobernar la versión explicativa es: \emph{¿el video generó ventas incrementales suficientes por sol invertido, una vez separado su efecto de la apertura de sedes, la inversión publicitaria y las promociones, como para justificar ampliar la campaña ahora?}
+
+Clasificando las métricas del dashboard en la jerarquía actividad~$\to$~resultado~$\to$~impacto: \texttt{vistas\_video\_miles} es \textbf{actividad} (KPI de vanidad, mide exposición al contenido y sube 3.25$\times$ PRE$\to$POST, pero su relación cruda con ventas se explica en gran parte por confusores compartidos); \texttt{entradas\_vendidas} y \texttt{ventas\_soles} son \textbf{resultado} (comportamiento agregado, sin descontar causas); las ventas incrementales por sol invertido, controlando apertura, inversión y promoción, son el único candidato a \textbf{impacto} --y hoy, con datos observacionales, no se pueden estimar de forma confiable (sección~\ref{ssec:c5-q2}).
+
+\paragraph{Límite / trade-off.} Reducir filtros y retirar el scatter libre le quita al comité la capacidad de explorar los datos por su cuenta, pero esa misma libertad fue lo que permitió la lectura causal errónea. Un producto explicativo sacrifica exploración a cambio de una conclusión defendible; si el comité necesita explorar, debe hacerlo en un \emph{workbook} aparte, no en la pantalla de decisión.
+
+\subsection{Pregunta 2 --- Método científico y causalidad}\label{ssec:c5-q2}
+
+\paragraph{Concepto técnico.} El método científico exige recorrer pregunta $\to$ hipótesis $\to$ datos $\to$ prueba $\to$ decisión sin saltarse pasos, y en particular sin confundir \emph{asociación observacional} --lo único que un CSV histórico puede mostrar sin experimento-- con \emph{causalidad} --lo que exigiría manipular el tratamiento (el video) de forma independiente del resto de factores.
+
+\paragraph{Evidencia --- cadena método completa.}
+\begin{enumerate}
+  \item \textbf{Pregunta:} ¿el lanzamiento del video de Killa incrementó las ventas de entradas del festival?
+  \item \textbf{Hipótesis (H1):} el video causó un aumento neto de ventas, más allá de lo explicado por apertura de sedes, inversión, promociones y estacionalidad. \textbf{Hipótesis nula (H0):} el aumento observado se explica total o mayormente por factores que cambiaron a la vez que el video.
+  \item \textbf{Datos:} \texttt{caso5\_campania\_killa\_chasquifest.csv}, 1\,464 filas fecha$\times$sede, 1-mar a 30-jun 2026, video el 15-abr.
+  \item \textbf{Prueba:} la diferencia bruta PRE/POST sobre \texttt{ventas\_soles} es num$=7\,689.9-3\,839.6=3\,850.3$, den$=3\,839.6$ $\to$ \textbf{+100.3\%} ($n_{\text{PRE}}=540$, $n_{\text{POST}}=924$). Restringiendo a sedes ya abiertas (\texttt{festival\_abierto\_flag}$=1$): num$=7\,956.2-9\,130.3=-1\,174.2$, den$=9\,130.3$ $\to$ \textbf{-12.9\%} ($n_{\text{PRE}}=206$, $n_{\text{POST}}=891$). Una regresión de \texttt{ventas\_soles} sobre \texttt{post} más los confusores observados confirma la inestabilidad: el coeficiente de \texttt{post} pasa de $+3\,850$ soles (modelo ingenuo, todas las sedes) a $-5\,185$ soles (con controles), y de $-1\,174$ soles (solo sedes abiertas, sin controles) a $-6\,460$ soles (solo sedes abiertas, con controles).
+  \item \textbf{Decisión:} con los datos observacionales disponibles \textbf{no se rechaza H0}: no hay evidencia robusta de un efecto neto positivo del video una vez controlados los confusores observados. No es posible afirmar que ``Killa causó el boom''.
+\end{enumerate}
+
+\paragraph{Confusores identificados (media PRE $\to$ POST).}
+\begin{table}[H]
+\centering
+\caption{Balance de confusores entre fase PRE y fase POST.}
+\label{tab:c5-confusores}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Variable & PRE & POST & Cambio \\
+\midrule
+\texttt{festival\_abierto\_flag} (8$\to$12 sedes) & 0.38 & 0.96 & $+0.58$ \\
+\texttt{inversion\_publicitaria\_soles} & 253.70 & 731.53 & $\times 2.88$ \\
+\texttt{promocion\_activa\_flag} & 0.00 & 0.54 & solo existe en POST \\
+\texttt{vistas\_video\_miles} & 5.51 & 17.89 & $\times 3.25$ \\
+\texttt{fin\_de\_semana\_flag} (placebo) & 0.29 & 0.29 & $\approx 0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Cuatro confusores se mueven junto con la fase de campaña: la apertura de sedes nuevas (8 de 12 sedes ya operaban en PRE, las 12 en POST --el promedio POST incluye sedes que no existían en PRE--), la inversión publicitaria (casi triplicada), las promociones (inexistentes antes del video, colinealidad casi perfecta con la fase) y, de forma adicional, la apertura escalonada de sedes entre el 1-mar y el 2-may --una sede (SED-09) abre exactamente el 15-abr, coincidencia temporal que refuerza visualmente la narrativa sin ser evidencia causal. En cambio \texttt{fin\_de\_semana\_flag} (0.29$\to$0.29) y \texttt{lluvia\_flag} (0.27$\to$0.27) no están confundidos y sirven de control de que el resto del diseño del CSV es razonable (Figura~\ref{fig:c5-q2a}).
+
+\begin{figure}[H]\centering\includegraphics[width=0.95\linewidth]{caso5_q2_confusores.pdf}\caption{Balance de confusores PRE vs.\ POST: casi todo se mueve junto con la fase de campaña salvo fin de semana y lluvia.}\label{fig:c5-q2a}\end{figure}
+
+Fijar la población de sedes invierte el signo de la diferencia bruta (Figura~\ref{fig:c5-q2b}):
+
+\begin{figure}[H]\centering\includegraphics[width=0.85\linewidth]{caso5_q2_efecto.pdf}\caption{El ``efecto'' ingenuo (+100.3\%) se invierte a $-12.9$\% al controlar la apertura de sedes.}\label{fig:c5-q2b}\end{figure}
+
+\paragraph{Decisión.} Se proponen dos diseños más fuertes, complementarios: (A) \emph{despliegue escalonado} (\emph{stepped-wedge}) por sede --dado que las 12 sedes ya abren en fechas distintas, un cronograma de intensificación de campaña aleatorizado en el tiempo por sede permitiría que cada sede sea control de sí misma antes de recibir el ``empujón'', separando el video del calendario de apertura e inversión-- y (B) una comparación tipo \emph{diferencias en diferencias}:
+\begin{equation*}
+\begin{aligned}
+\texttt{ventas\_soles} \sim{} & \texttt{post} + \texttt{sede\_FE} + \texttt{tendencia\_fecha} \\
+& + \texttt{inversion} + \texttt{promo} + \texttt{festival\_abierto}
+\end{aligned}
+\end{equation*}
+con efectos fijos de sede y tendencia temporal, restringida a sedes abiertas todo el período --aproximada por el modelo controlado de sedes abiertas ($-6\,460$ soles), con la limitación honesta de que persiste sesgo de selección de sede. El umbral de decisión, definido antes de mirar el resultado: ampliar la campaña únicamente si las ventas incrementales por sol invertido en campaña son $\geq$ S/3 por sol, con intervalo de confianza al 95\% que excluya el cero, medido bajo un diseño controlado. Con los coeficientes disponibles (negativos pero no causalmente limpios) ese umbral queda \textbf{sin evaluar}, no alcanzado ni descartado.
+
+\paragraph{Límite / trade-off.} Ni el modelo controlado ni la comparación intra-sedes-abiertas resuelven el confusor de ``cuáles sedes'': las sedes que abrieron antes probablemente son mercados más grandes o maduros, de modo que incluso restringiendo a ``sedes abiertas'' se compara una mezcla distinta de mercados entre PRE y POST. Con datos puramente observacionales no se puede atribuir el cambio de ventas al video, ni en un sentido ni en el otro; se requiere un diseño prospectivo (piloto escalonado) para hablar de causalidad con algo de confianza \citep{simpson1951interpretation}.
+
+\subsection{Pregunta 3 --- Storyboard técnico}\label{ssec:c5-q3}
+
+\paragraph{Concepto técnico.} Un scatter con línea de tendencia sobre datos crudos sobrestima sistemáticamente una relación cuando ambas variables comparten confusores; el remedio analítico es comparar la correlación cruda con la correlación parcial (sobre residuos, tras controlar los mismos confusores del balance de la sección~\ref{ssec:c5-q2}). Ningún punto del storyboard usa la fórmula ``el video causó''; el diseño de la pregunta~2 --datos observacionales, confusores no resueltos-- no lo justifica. Se usa ``coincide con'' / ``está asociado a'' / ``se solapa con''.
+
+\paragraph{Evidencia.} La correlación cruda entre \texttt{vistas\_video\_miles} y \texttt{entradas\_vendidas} sobre las 1\,464 filas es $r=0.532$ ($R^2=0.283$). Al residualizar ambas variables sobre los cinco confusores de la Tabla~\ref{tab:c5-confusores} (apertura de sede, inversión, promoción, fin de semana y lluvia), la correlación parcial cae a $r=0.200$ ($R^2=0.040$): más de la mitad de la $R^2$ cruda desaparece al controlar los confusores identificados (Figura~\ref{fig:c5-q3}). El storyboard de cinco \emph{story points} que se entregaría al comité es:
+
+\begin{enumerate}
+  \item \textbf{Contexto} --- ``El período de campaña: 4 meses, 12 sedes, un lanzamiento el 15-abr''. Línea de tiempo con marcador vertical en 2026-04-15 y conteo de sedes activas por semana (8$\to$12). Establece el marco temporal sin insinuar efecto.
+  \item \textbf{Patrón} --- ``Las ventas promedio por sede-día suben +100\% después del 15-abr (dato bruto)''. Barras agrupadas PRE vs.\ POST sobre \texttt{ventas\_soles} (3\,839.6 vs.\ 7\,689.9), rotulado explícitamente como \emph{diferencia bruta, sin controlar}.
+  \item \textbf{Desagregación (contraevidencia)} --- ``Al fijar la población de sedes, el patrón se invierte: $-13$\%''. Balance de confusores (Figura~\ref{fig:c5-q2a}) más barras ingenuo vs.\ controlado (Figura~\ref{fig:c5-q2b}): apertura 0.38$\to$0.96, inversión $\times2.88$, promo 0$\to$0.54 (finde y lluvia sin cambio); intra-sedes-abiertas $9\,130.3\to7\,956.2$ = $-12.9$\%. Es el punto que más debilita la historia del ``boom''.
+  \item \textbf{Método / trade-off} --- ``Ni la comparación cruda ni la controlada aíslan el efecto del video''. Tabla resumen de los cuatro modelos de regresión (secc.~\ref{ssec:c5-q2}): $+3\,850 \to -5\,185 \to -1\,174 \to -6\,460$ soles. El coeficiente cambia de signo según qué se controla --firma clásica de un efecto no identificado con datos observacionales.
+  \item \textbf{Acción} --- ``Recomendación: no ampliar la campaña todavía; correr un piloto escalonado con umbral pre-definido''. Tarjeta de cierre con el umbral de la pregunta~2 (S/3 por sol, IC95\% sin cero, hoy sin evaluar) y el diseño \emph{stepped-wedge} como siguiente paso.
+\end{enumerate}
+
+\begin{figure}[H]\centering\includegraphics[width=0.85\linewidth]{caso5_q3_scatter.pdf}\caption{La correlación cruda vistas$\leftrightarrow$entradas ($r=0.532$) se desinfla a $r=0.200$ al controlar los confusores compartidos: asociación, no causa \citep{anscombe1973graphs}.}\label{fig:c5-q3}\end{figure}
+
+\paragraph{Decisión.} Cada \emph{story point} declara sus 4 piezas (título analítico, tipo de gráfico, evidencia mínima, mensaje/decisión) y ninguno afirma causalidad; el punto 3 se mantiene como contraevidencia obligatoria antes de llegar a la acción del punto 5.
+
+\paragraph{Límite / trade-off.} Un storyboard de 5 puntos obliga a resumir; se omiten matices (p.\,ej.\ la heterogeneidad por macrozona) que un analista podría querer explorar aparte. Ese es el costo aceptado de un producto explicativo, ya discutido en la pregunta~1.
+
+\subsection{Pregunta 4 --- Memo y bitácora}\label{ssec:c5-q4}
+
+\begin{quote}
+Período: mar-jun 2026, video 15-abr. Métrica: ventas incrementales por sol invertido. Evidencia: +100\% bruto en ventas cae a -13\% al restringir a sedes ya abiertas; el coeficiente post cambia de signo al controlar. Método: comparación intra-sedes-abiertas y regresión controlando apertura de sedes, inversión y promociones. Limitación: datos observacionales, efecto no identificado causalmente; sesgo de selección de sede. Acción: no ampliar la campaña; correr un piloto escalonado por sede. Indicador futuro: ventas incrementales por sol invertido en el piloto, contra umbral S/3/sol con IC95\% que excluya cero. \emph{(86 palabras)}
+\end{quote}
+
+\bitacora{%
+``El video de Killa disparó las ventas +108\%: hay que ampliar la campaña ya.''%
+}{%
+Ventas incrementales por sol invertido = (ventas POST $-$ ventas esperadas sin cambio de inversión, promo o apertura) / $\Delta$ inversión publicitaria, sobre \texttt{ventas\_soles} por fecha$\times$sede, período abr--jun 2026 vs.\ línea base mar--abr, segmento = sedes abiertas todo el período, meta $\geq$ S/3 de venta incremental por sol con IC95\% que excluya cero.%
+}{%
+Al desagregar por \texttt{festival\_abierto\_flag} y correr la regresión con confusores (secc.~\ref{ssec:c5-q2}), la diferencia +100\%/+108\% se convierte en $-12.9$\% (intra-sedes-abiertas) y el coeficiente de \texttt{post} se vuelve negativo en ambos modelos controlados ($-5\,185$ a $-6\,460$ soles).%
+}{%
+``El aumento bruto se confunde con sedes nuevas, inversión y promos; efecto no identificado.''%
+}{%
+El comité no debe ampliar la campaña basándose en el titular; debe pedir un piloto escalonado con umbral pre-definido antes de comprometer presupuesto adicional.%
+}
+
+\texttt{vistas\_video\_miles} y el ``+108\%'' no son el KPI decisor: la primera es una métrica de \textbf{actividad} (exposición, sube $\times3.25$ junto con todo lo demás) y la segunda es un \textbf{resultado} bruto (entradas vendidas sin descontar causas); ninguna conecta el gasto en campaña con un efecto atribuible. Ambas suben porque el tiempo avanza y los confusores --sedes, inversión, promos-- suben con ellas; su correlación con las ventas es en gran parte compartida y \textbf{no identificable como causal} ($R^2$ cruda 0.283 $\to$ $R^2$ parcial $\sim$0.040 al controlar, secc.~\ref{ssec:c5-q3}). El KPI decisor debe ser la métrica de \textbf{impacto} --ventas incrementales por sol invertido, medida con un diseño que separe el video de sus confusores-- porque es la única que responde si vale la pena poner más dinero en la campaña.

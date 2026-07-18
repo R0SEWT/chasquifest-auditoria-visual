@@ -1,0 +1,142 @@
+\section{Caso 1 --- La torta porcentual que nadie pidió}\label{sec:caso1}
+
+El tablero original de taquilla arma una torta de \enquote{participación en el éxito} con tres porciones: App~35.7\%, Web~33.8\% y Taquilla~30.5\%. Nadie en la reunión logra decir a qué total se refiere ese 35.7\%, y la razón es sencilla: no se refiere a ningún total. El practicante tomó \lstinline|ocupacion_fila_pct|, un ratio que ya viene calculado \emph{por fila} (\lstinline|evento_id|~$\times$~\lstinline|canal|, $n=216$ filas), y lo \textbf{sumó} por canal para trazar la torta. El denominador de esa torta es \enquote{la suma de 216 porcentajes de fila}, una cantidad sin significado de negocio: la suma de ratios no es el ratio de las sumas. Antes de continuar se verificó, recalculando directamente desde el CSV, que en efecto \lstinline|ocupacion_fila_pct| $=$ \lstinline|ingresos_validados|/\lstinline|cupos_ofertados|$\times 100$ (diferencia máxima $0.0049$ pp) y que \lstinline|margen_fila_pct| $=$ (\lstinline|ventas_soles|$-$\lstinline|costo_variable_soles|)/\lstinline|ventas_soles|$\times 100$ (diferencia máxima $0.0050$ pp): ambas son fórmulas de fila, no aditivas entre sí.
+
+\subsection{Pregunta 1 --- Promedio de promedios}\label{ssec:c1-q1}
+
+\paragraph{Concepto técnico.} Existen dos maneras de agregar una columna que ya es un ratio. La primera es \emph{ratio-of-sums}: se suman numerador y denominador por separado en todo el universo deseado y se divide al final, con lo cual cada fila pesa según su tamaño real.
+\[
+\text{Ocupación ponderada} = \frac{\sum \text{ingresos\_validados}}{\sum \text{cupos\_ofertados}} \times 100
+\]
+La segunda es \emph{mean-of-ratios}: se promedian los ratios de fila ya calculados, dando el mismo peso (un voto) a una fila de 521 cupos que a una de 4\,812 cupos.
+\[
+\text{Ocupación promedio simple} = \operatorname{AVG}(\text{ocupacion\_fila\_pct})
+\]
+\lstinline|AVG([ocupacion_fila_pct])| responde \enquote{¿cuál es el ratio promedio de una fila evento-canal cualquiera?}, no \enquote{¿qué fracción de la capacidad total del festival se ocupó?}. La pregunta de negocio de la jefa de taquilla es de \textbf{capacidad total}, y solo el ratio-of-sums la responde correctamente.
+
+\paragraph{Evidencia.} Ocupación ponderada $=$ SUM(\lstinline|ingresos_validados|)/SUM(\lstinline|cupos_ofertados|)$\times 100 = 281\,091/311\,400\times 100 = 90.27\%$. Ocupación promedio simple $=$ AVG(\lstinline|ocupacion_fila_pct|) sobre $n=216$ filas $= 88.17\%$. La meta, tomada de la columna \lstinline|meta_ocupacion_pct| (valor único en todo el CSV), es $88.0\%$. A nivel de temporada completa ($N=216$, grano homogéneo evento$\times$canal) \textbf{ambas métricas superan la meta}, pero con colchones muy distintos: $+2.27$ pp la ponderada frente a $+0.17$ pp la promedio simple — la lectura ponderada dice \enquote{cumplida con holgura}, la no ponderada dice \enquote{cumplida raspando, un evento chico y flojo la tumba}. Al cortar por mes sí aparece una divergencia de signo: en julio 2026 la ponderada da $89.91\%$ (CUMPLE) y la promedio simple da $87.14\%$ (\textbf{NO CUMPLE}) — evidencia directa de que ambos estimadores pueden decidir distinto frente a la misma meta. Advertencia adicional de homologación: los 12 eventos de julio-2026 están fechados el 25-jul-2026 y los 12 de agosto también son posteriores a \enquote{hoy} (18-jul-2026, fecha de contexto del examen); el CSV ya trae \lstinline|ingresos_validados| cargado para esas filas, de modo que se trata de una temporada completa pre-cargada para el ejercicio, no de un feed operativo en vivo. El corte mensual aquí solo sirve para \emph{ilustrar} que el promedio simple y la razón ponderada pueden discrepar; el KPI oficial de temporada debe reportarse a nivel global ($N=216$).
+
+\paragraph{Decisión.} Fórmula agregada (Tableau, ratio-of-sums):
+\begin{lstlisting}[style=cod]
+Ocupacion Global % =
+SUM([ingresos_validados]) / SUM([cupos_ofertados])
+\end{lstlisting}
+símil en \lstinline|pandas|:
+\begin{lstlisting}[style=cod]
+occ_weighted = df['ingresos_validados'].sum() / df['cupos_ofertados'].sum() * 100
+\end{lstlisting}
+Lo que \textbf{no} debe usarse (el espíritu del error del practicante, aplicado a ocupación):
+\begin{lstlisting}[style=cod]
+AVG([ocupacion_fila_pct])          -- Tableau, mean-of-ratios, sesgado
+df['ocupacion_fila_pct'].mean()    -- pandas, mismo sesgo
+\end{lstlisting}
+La Figura~\ref{fig:c1-q1} presenta ambos estimadores del mismo KPI junto a la línea de meta: cruzan la meta con colchones distintos y, a corte mensual, incluso con veredictos opuestos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso1_q1_ocupacion.pdf}
+\caption{Tarea comparar: ocupación global ponderada (ratio-of-sums, $90.27\%$) frente a la promedio simple de \lstinline|ocupacion_fila_pct| (mean-of-ratios, $88.17\%$), con la meta de $88\%$ como referencia.}
+\label{fig:c1-q1}
+\end{figure}
+
+\paragraph{Límite / trade-off.} El ratio-of-sums exige que numerador y denominador estén en la misma unidad y grano que la pregunta de negocio (aquí, personas y cupos, directamente sumables); no sirve para razones que no son sumables sin más contexto (por ejemplo, promediar tasas ya normalizadas por tamaños muy heterogéneos, como un NPS por evento). La ponderada, además, oculta la varianza entre filas: un festival puede mostrar $90.27\%$ ponderado y aun así tener una fila puntual muy floja (véase Taquilla, Pregunta~2), de modo que conviene reportar ambas cifras junto con la dispersión, no solo la ponderada. Y como se advirtió arriba, todo corte temporal debe declarar explícitamente si compara eventos ya realizados contra eventos programados \citep{gelman2007average}.
+
+\subsection{Pregunta 2 --- Nivel del cálculo}\label{ssec:c1-q2}
+
+\paragraph{Concepto técnico.} \lstinline|ocupacion_fila_pct| y \lstinline|margen_fila_pct| son \textbf{row-level}: una fórmula evaluada por cada fila \lstinline|evento_id|$\times$\lstinline|canal|, no aditiva entre filas. Ocupación global, margen global y ticket promedio son \textbf{medidas agregadas}, que solo tienen sentido calculadas como ratio-of-sums en el grano deseado (festival, canal, departamento o periodo) — nunca como \lstinline|AVG()| de una columna row-level ya calculada.
+
+\paragraph{Evidencia.} Margen global: num $=$ SUM(\lstinline|ventas_soles|)$-$SUM(\lstinline|costo_variable_soles|) $= 5\,949\,746.23$; den $=$ SUM(\lstinline|ventas_soles|) $=10\,473\,741.35$ $\Rightarrow$ margen ponderado $=56.81\%$, frente a $57.33\%$ de promedio simple de \lstinline|margen_fila_pct| ($n=216$) — la misma disyuntiva ratio-of-sums vs mean-of-ratios de la Pregunta~1, aquí con una distorsión leve ($0.52$ pp) porque el tamaño de fila es más homogéneo que en ocupación (donde la distorsión fue $2.10$ pp, porque \lstinline|cupos_ofertados| varía más entre canales: App/Web $\sim 2\,700$--$4\,800$ frente a Taquilla $\sim 1\,800$--$1\,925$). El sesgo de tamaño crece con la heterogeneidad del denominador. Ticket promedio por orden: num $=$ SUM(\lstinline|ventas_soles|) $=10\,473\,741.35$; den $=$ SUM(\lstinline|ordenes|) $=140\,308$ $\Rightarrow$ S/~$74.65$ por orden. No hay filas con denominador cero en cupos, ventas ni órdenes, pero la protección se declara igual como buena práctica. Ambos KPI se calculan sobre la temporada completa abr--ago~2026 ($N=216$ filas / 72 eventos); el CSV no trae meta externa de margen ni de ticket, por lo que el benchmark interno es la mediana entre canales: margen $56.56\%$ (App $56.18\%$, Web $56.56\%$, Taquilla $59.20\%$) y ticket S/~$73.26$ (App S/~$78.72$, Web S/~$73.26$, Taquilla S/~$66.04$). El margen global ($56.81\%$) queda apenas $0.25$ pp sobre esa mediana y muy cerca del margen de App ($56.18\%$, el canal de mayor volumen), señal de que el global es \enquote{jalado} hacia abajo por el peso de App; conviene revisar la mezcla de canales antes de tocar precio o comisión. El ticket global (S/~$74.65$) queda ligeramente sobre la mediana por el mismo arrastre de App; Taquilla combina el ticket más bajo (S/~$66.04$) con el margen más alto ($59.20\%$), lo que sugiere margen para una política de precio diferenciada sin erosionar su rentabilidad.
+
+\paragraph{Decisión.} Margen global (Tableau, protegido contra división por cero):
+\begin{lstlisting}[style=cod]
+Margen Global % =
+IIF(SUM([ventas_soles]) = 0, NULL,
+    (SUM([ventas_soles]) - SUM([costo_variable_soles])) / SUM([ventas_soles]))
+\end{lstlisting}
+Ticket promedio:
+\begin{lstlisting}[style=cod]
+Ticket Promedio =
+IIF(SUM([ordenes]) = 0, NULL, SUM([ventas_soles]) / SUM([ordenes]))
+\end{lstlisting}
+Nota sobre \lstinline|ZN()|: en Tableau solo convierte \lstinline|NULL| en $0$ (protege agregaciones de nulos), \textbf{no} protege contra división por cero; para eso se necesita \lstinline|IIF(denominador=0, NULL, ...)| como arriba. Usar \lstinline|ZN()| únicamente en el denominador de una división puede convertir un \lstinline|NULL| válido en $0$ y producir un error real de división por cero. Clasificación de negocio de los tres KPI: \textbf{Ocupación (guardrail)} — \lstinline|cupos_ofertados| es un tope físico/contractual por sede-canal-evento y la meta $88\%$ es un piso operativo pactado, no un objetivo de rentabilidad; no puede superar el $100\%$ y operar muy por debajo desperdicia capacidad ya comprometida con la sede. \textbf{Margen (resultado)} — mide directamente la rentabilidad de cada canal-evento tras costo variable, el resultado financiero que en última instancia interesa a la organización. \textbf{Ticket promedio (eficiencia)} — mide cuánto valor se extrae por transacción, proxy de mezcla de precio/tamaño de compra; es un indicador de productividad comercial, ni resultado final ni límite duro de capacidad.
+
+La Figura~\ref{fig:c1-q2} compara margen y ocupación ponderados por canal: \textbf{Taquilla} tiene el mayor margen ($59.20\%$) pero la menor ocupación ($81.15\%$); \textbf{App} tiene la mayor ocupación ($94.51\%$) con margen algo menor ($56.18\%$) — ambos KPI no se mueven juntos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso1_q2_metricas_canal.pdf}
+\caption{Tarea comparar: margen \% y ocupación \% ponderados por canal (ratio-of-sums en cada caso). Taquilla domina en margen y App en ocupación.}
+\label{fig:c1-q2}
+\end{figure}
+
+Por qué mejorar un KPI no garantiza mejorar los otros, con evidencia del propio CSV (asociación, no causalidad): la correlación entre \lstinline|ocupacion_fila_pct| y \lstinline|margen_fila_pct| ($n=216$ filas) es $r=-0.43$ — asociación negativa moderada, consistente con la intuición del enunciado (\enquote{descuento sube ocupación pero baja margen}), aunque no probada causalmente aquí; un confusor plausible es el propio canal (Taquilla concentra mayor margen con menor ocupación; App, lo inverso, probablemente por comisiones de plataforma o descuentos digitales que Taquilla física no paga). La correlación entre ticket y ocupación es $r=+0.42$ (positiva, moderada), que \textbf{contradice} la intuición ingenua de \enquote{precio alto ahuyenta demanda} citada en el enunciado: en este CSV el canal con mayor ticket (App, S/~$78.72$) es también el de mayor ocupación ponderada ($94.51\%$), probablemente confundido por el canal mismo. Entre ticket y margen la correlación es débil ($r=-0.16$); Taquilla es un valor atípico que domina el signo y, controlando por canal, la relación podría invertirse o desaparecer.
+
+\paragraph{Límite / trade-off.} Ninguna correlación aquí prueba causalidad: son asociaciones a nivel evento-canal con canal, sede y estacionalidad como confusores no controlados \citep{simpson1951interpretation}. Antes de tomar una decisión de \emph{pricing} o descuento basada en \enquote{subir ocupación baja margen} se necesitaría un diseño que aísle el efecto del canal (por ejemplo, comparar el mismo canal en eventos con y sin promoción) en vez de comparar canales estructuralmente distintos entre sí.
+
+\subsection{Pregunta 3 --- LOD, total visible y filtros}\label{ssec:c1-q3}
+
+\paragraph{Concepto técnico.} Existen dos formas de calcular \enquote{participación del canal dentro de su departamento} que usan denominadores con reglas de filtrado distintas. \lstinline|{ FIXED [departamento] : SUM([ventas_soles]) }| es una expresión de nivel de detalle (LOD) \emph{fija}: calcula el total de ventas del departamento ignorando los filtros de dimensión de la hoja (fecha, canal, etc.), porque en el orden de operaciones de Tableau los filtros de dimensión normales se aplican \emph{después} de las LOD FIXED; solo un filtro de contexto se evalúa antes y sí recorta lo que ve el FIXED. \lstinline|TOTAL(SUM([ventas_soles]))| es una \emph{table calculation}: sí respeta los filtros de dimensión, porque se calcula sobre las marcas que ya quedaron en el panel después de filtrar. Declaración obligatoria de partición y \emph{addressing}: en una vista con \lstinline|departamento| en filas/paneles y \lstinline|canal| en columnas dentro de cada panel, \lstinline|TOTAL(SUM([ventas_soles]))| debe direccionarse (\emph{addressing}) por \lstinline|canal| y particionarse por \lstinline|departamento| — recalcula recorriendo las marcas de canal dentro de cada panel de departamento por separado. Si \lstinline|departamento| no se declara como partición, \lstinline|TOTAL()| sumaría canal y departamento juntos, devolviendo el gran total del festival en vez del total por departamento.
+
+\paragraph{Evidencia.} La participación de cada canal dentro de su propio departamento (12 departamentos; num $=$ SUM ventas canal-departamento, den $=$ SUM ventas departamento) es muy estable: App oscila entre $53.08\%$ (Junín) y $54.55\%$ (Ayacucho); Web entre $28.37\%$ (Ucayali) y $30.27\%$ (Lambayeque); Taquilla entre $16.28\%$ (Ayacucho) y $18.04\%$ (Junín) — coherente con el share nacional (App~$53.7\%$, Web~$29.3\%$, Taquilla~$17.0\%$; num $=$ SUM ventas canal, den $=$ SUM ventas total $=$ S/~$10\,473\,741.35$). Como ejemplo de FIXED vs TOTAL de panel visible, para el departamento Lima, canal App: \textbf{FIXED} (histórico completo, 6 eventos) $\Rightarrow$ num $=$ S/~$987\,279.17$, den $=$ S/~$1\,823\,558.36$ $\Rightarrow$ $54.14\%$; \textbf{TOTAL de panel visible} (solo eventos con \lstinline|fecha_evento| $<$ 18-jul-2026, 4 eventos, filtro de fecha como filtro de dimensión) $\Rightarrow$ num $=$ S/~$682\,899.45$, den $=$ S/~$1\,278\,780.13$ $\Rightarrow$ $53.40\%$. Los denominadores difieren (S/~$1\,823\,558.36$ frente a S/~$1\,278\,780.13$) porque miden universos distintos (6 eventos frente a 4): los porcentajes $54.14\%$ y $53.40\%$ no se contradicen, describen preguntas distintas.
+
+\paragraph{Decisión.} El tablero debe ofrecer dos medidas en paralelo, cada una con su título aclaratorio. \emph{Participación histórica del canal en el departamento} usa FIXED como denominador y no se mueve aunque el usuario cambie el filtro de fecha, salvo que ese filtro se convierta en filtro de contexto (el contexto se evalúa antes que la LOD). \emph{Participación dentro del periodo visible} usa TOTAL() como denominador y se recalcula cada vez que el usuario mueve el filtro de fecha o de canal. Titulares válidos que no se contradicen: con FIXED, \enquote{App concentra $\sim 54\%$ de las ventas históricas de Lima (temporada completa, 6 eventos)}; con TOTAL(), \enquote{En lo que va de la temporada (4 eventos ya realizados al 18-jul-2026), App representa $53.4\%$ de las ventas visibles de Lima}. Símil en \lstinline|pandas|:
+\begin{lstlisting}[style=cod]
+# FIXED -> ignora cualquier filtro de dimension posterior
+df['ventas_depto_FIXED'] = df.groupby('departamento')['ventas_soles'].transform('sum')
+
+# TOTAL() del panel visible -> se recalcula DESPUES de aplicar el filtro
+visible = df[df['fecha_evento'] < '2026-07-18']
+visible['ventas_depto_TOTAL'] = visible.groupby('departamento')['ventas_soles'].transform('sum')
+\end{lstlisting}
+
+La Figura~\ref{fig:c1-q3} sustituye la torta falsa por la tarea parte-todo correcta y, además, expone lado a lado el artefacto original (\enquote{torta de \%} sin denominador real) contra el share real de ventas: el orden de dominancia cambia por completo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso1_q3_share.pdf}
+\caption{Tarea parte-todo: \enquote{torta de \%} original (suma de \lstinline|ocupacion_fila_pct| por canal, sin denominador de negocio) frente al share real de ventas (num $=$ SUM \lstinline|ventas_soles| canal, den $=$ SUM \lstinline|ventas_soles| total). App pasa de \enquote{empatado} con los otros dos canales a dominar con más de la mitad de las ventas; Taquilla, de \enquote{casi un tercio} a apenas $17\%$.}
+\label{fig:c1-q3}
+\end{figure}
+
+\paragraph{Límite / trade-off.} Convertir \lstinline|fecha_evento| o \lstinline|canal| en filtro de contexto para que también recorte el FIXED tiene costo de rendimiento (Tableau materializa una tabla temporal por cada combinación de contexto) y cambia semánticamente la pregunta: el \enquote{histórico completo} deja de existir si todo se vuelve contexto. Se recomienda dejar un único selector de fecha como filtro normal de dimensión (alimenta TOTAL/panel visible) y no tocar el filtro de contexto salvo que el usuario pida explícitamente \enquote{recalcular también el histórico}; de lo contrario los dos titulares dejan de ser comparables entre sí. La torta original se descarta en favor de la barra: con solo tres categorías la barra ordenada permite comparar magnitudes por longitud (más precisa que ángulo o área) y deja espacio para anotar el valor exacto \citep{tufte2001visual,cleveland1984graphical}.
+
+\subsection{Pregunta 4 --- Parámetro no es filtro}\label{ssec:c1-q4}
+
+\paragraph{Concepto técnico.} Un \textbf{filtro} decide qué filas entran al cálculo (subconjunta los datos); un \textbf{parámetro} decide cómo se calcula o se dibuja algo, sin quitar ninguna fila — es una variable global referenciada dentro de un campo calculado que afecta a toda la vista de manera consistente. Si un control debe cambiar el eje o la medida mostrada, o un umbral de comparación, sin alterar qué datos entran, debe ser parámetro; si debe excluir datos (un canal, un rango de fechas, un departamento), debe ser filtro (o filtro de contexto si además debe recortar una LOD FIXED, ver Pregunta~3).
+
+\paragraph{Decisión.} Parámetro selector de medida, \lstinline|Medida Seleccionada| (string, lista \lstinline|Ventas|/\lstinline|Ocupación|/\lstinline|Margen|), referenciado en un campo calculado:
+\begin{lstlisting}[style=cod]
+Medida (segun parametro) =
+CASE [Medida Seleccionada]
+WHEN 'Ventas'     THEN SUM([ventas_soles])
+WHEN 'Ocupacion'  THEN SUM([ingresos_validados]) / SUM([cupos_ofertados]) * 100
+WHEN 'Margen'     THEN (SUM([ventas_soles]) - SUM([costo_variable_soles])) / SUM([ventas_soles]) * 100
+END
+\end{lstlisting}
+Parámetro numérico de meta, \lstinline|Meta Ocupación %| (float, default $88$, rango sugerido $70$--$100$):
+\begin{lstlisting}[style=cod]
+Cumple Meta? = SUM([ingresos_validados])/SUM([cupos_ofertados])*100 >= [Meta Ocupacion %]
+\end{lstlisting}
+Evidencia anclada: con \lstinline|meta = 88| y la ocupación ponderada global calculada en la Pregunta~1 ($90.27\%$), el semáforo evalúa $90.27 \geq 88 \to$ \textsc{true} $\to$ CUMPLE (colchón $+2.27$ pp). Si el usuario mueve el parámetro a, por ejemplo, $92\%$, el mismo cálculo cambia a NO CUMPLE ($90.27 < 92$) sin quitar ni una fila de datos: esa invariancia del $N$ es la prueba de que se trata de un parámetro y no de un filtro.
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{lll}
+\toprule
+Control & Tipo & Por qué \\
+\midrule
+Ventas / Ocupación / Margen (medida a graficar) & Parámetro & cambia el cálculo del eje, no quita filas \\
+Meta de ocupación ($88\%$) & Parámetro & mueve una línea de referencia y recalcula un semáforo, no filtra \\
+\lstinline|canal| (para explorar subconjuntos) & Filtro (o de contexto si alimenta un FIXED) & excluye filas \\
+\lstinline|fecha_evento| / rango de fechas & Filtro (dimensión o contexto, ver P3) & excluye filas \\
+\lstinline|departamento| & Filtro & excluye filas \\
+\bottomrule
+\end{tabularx}
+\caption{Checklist parámetro vs.\ filtro para los controles del caso.}
+\end{table}
+
+Línea de referencia: en Tableau, \lstinline|Analysis > Reference Line > Add Reference Line|, tipo \emph{Constant}, valor \lstinline|[Meta Ocupación %]| (directamente el parámetro, o vía un campo calculado auxiliar si la versión lo requiere), con etiqueta \lstinline|"Meta: " + STR([Meta Ocupación %]) + "%"|. Así, cuando el usuario cambia el parámetro (p.~ej. de $88\%$ a $90\%$ para escenarios más exigentes), la línea y el semáforo se recalculan solos, sin tocar ningún filtro ni perder filas — el mismo patrón que la Figura~\ref{fig:c1-q1} de la Pregunta~1.
+
+\paragraph{Límite / trade-off.} \lstinline|ventas_soles| (rango aproximado S/~$12\,000$--$200\,000$ por fila) y \lstinline|margen_fila_pct| u \lstinline|ocupacion_fila_pct| (rango $0$--$100$) no deben compartir un eje sincronizado: si se sincronizan, una barra en soles aplastaría visualmente la línea de porcentaje (o viceversa) y la altura de las marcas dejaría de representar la magnitud real de cada serie. Si se usa \emph{dual axis}, no debe sincronizarse (\lstinline|Synchronize Axis| desmarcado), con dos escalas independientes y color de eje diferenciado. La alternativa más segura es evitar el \emph{dual axis} y usar \emph{small multiples} (dos gráficos lado a lado, uno en soles y otro en \%) para la tarea comparar, o ver tendencia si el eje X es tiempo, sin que la escala de una serie distorsione la lectura de la otra; o normalizar ambas series a un índice común (p.~ej. \% de la meta) si de verdad se necesita un solo eje. Nunca debe usarse \emph{dual axis} para \enquote{combinar} ventas y ocupación como si fueran comparables en magnitud, solo para verlas en el mismo eje X (tiempo o canal) con ejes Y independientes.
+
+\bitacora{App domina con 35.7\% de \enquote{éxito}, suma de porcentajes de fila sin sentido.}{Ocupación ponderada del festival $=$ SUM(\lstinline|ingresos_validados|)/SUM(\lstinline|cupos_ofertados|)$\times 100$, periodo temporada completa (abril--agosto 2026, $N=216$ filas/72 eventos), segmento por canal, comparada contra la meta fija \lstinline|meta_ocupacion_pct| $=88\%$.}{Se cambió el denominador de \enquote{conteo de filas} (mean-of-ratios, AVG(\lstinline|ocupacion_fila_pct|)) a \enquote{suma real de cupos} (ratio-of-sums, SUM(\lstinline|ingresos_validados|)/SUM(\lstinline|cupos_ofertados|)), y se abrió la segmentación por canal, revelando que Taquilla ($81.15\%$ ponderado, $61/72$ filas bajo meta) es el canal que arrastra el promedio hacia abajo mientras App ($94.51\%$) lo sostiene.}{Ocupación ponderada global $90.27\%$ cumple la meta $88\%$, pero Taquilla queda rezagada con $81.15\%$.}{En vez de celebrar el $35.7\%$ de App como éxito aislado, la gerencia debe priorizar reforzar Taquilla física (promoción, reasignación de cupos) antes de agosto; el próximo corte real (ventas de los eventos de agosto, aún no ocurridos a la fecha del examen) es la evidencia futura que podría revertir esta decisión si Taquilla recupera terreno o si App satura su capacidad y empieza a perder margen adicional.}

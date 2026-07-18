@@ -1,0 +1,152 @@
+\section{Caso 3 --- Julio duró doce días y el titular duró para siempre}
+\label{sec:caso3}
+
+El dataset de este caso (\texttt{data/caso3\_asistencia\_mensual\_chasquifest.csv}) tiene granularidad de una fila por mes $\times$ sede: 372 filas (31 meses, ene-2024 a jul-2026, por 12 sedes). Los campos relevantes son \texttt{mes}, \texttt{anio}, \texttt{numero\_mes}, \texttt{sede\_id}, el par \texttt{dias\_observados}/\texttt{dias\_del\_mes} (completitud del periodo), \texttt{cobertura\_periodo\_pct}, \texttt{asistentes} (volumen \emph{observado}, no proyectado), \texttt{meta\_asistentes} (ya ajustada a los días observados) y \texttt{evento\_contexto} (marca el quiebre logístico ficticio).
+
+El disparador del caso es editorial: se compara julio-2026 --- con corte a 12 días --- contra julio-2025 \textbf{completo} (31 días) y se anuncia una caída del 57\%. La verificación directa del CSV confirma los totales, pero expone el problema de fondo: \textbf{no son periodos homólogos}. Julio-2025 tiene \texttt{dias\_observados}=31/31 (cobertura 100\%) y un total de 281\,044 asistentes; julio-2026 tiene \texttt{dias\_observados}=12/31 (cobertura 38.71\%) y un total de 121\,281 asistentes. Comparar un mes cerrado contra uno truncado a poco menos de dos quintas partes de sus días mezcla desempeño con exposición temporal --- exactamente el error que las cuatro preguntas siguientes diagnostican y corrigen.
+
+\subsection{Pregunta 1 --- Componentes de la serie: tendencia, estacionalidad, quiebre y cobertura}
+\label{ssec:c3-q1}
+
+\paragraph{Concepto técnico.}
+Toda serie mensual observada se descompone en tendencia (nivel de largo plazo), estacionalidad (patrón que se repite cada año en los mismos meses), ruido (variación mes a mes no explicada por lo anterior) y, cuando existe, un quiebre estructural (choque puntual y localizado que no es ni tendencia ni estacionalidad):
+\[
+\text{asistentes}_t \;=\; \text{tendencia}_t + \text{estacionalidad}_t + \text{quiebre}_t + \text{ruido}_t .
+\]
+Julio-2026 exige un quinto componente, ortogonal a los anteriores: la \textbf{cobertura o completitud del periodo}. Cuando \texttt{dias\_observados} $<$ \texttt{dias\_del\_mes}, el valor no es un punto cerrado de la serie sino una medición parcial, ligada al total pleno por
+\[
+\text{asistentes}_{\text{observado},\,t} \;\approx\; \text{asistentes}_{\text{pleno},\,t}\times\frac{\text{dias\_observados}_t}{\text{dias\_del\_mes}_t}\quad(\text{bajo el supuesto de afluencia diaria uniforme}).
+\]
+
+\paragraph{Evidencia.}
+\textbf{Tendencia (leve alza):} el total anual de \texttt{asistentes} pasa de 2\,471\,862 en 2024 a 2\,703\,721 en 2025 (+9.38\%); los doce meses de 2025 superan a su homólogo 2024 sin excepción, entre +3.60\% (abril) y +15.58\% (febrero). Incluso marzo--mayo de 2025 --- los meses del quiebre --- crecen frente a 2024 (mar +11.16\%, abr +3.60\%, may +6.24\%), porque el quiebre solo golpea 2 de 12 sedes y no rompe la tendencia agregada.
+\textbf{Estacionalidad (picos jul/dic):} en 2025, julio = 281\,044 y diciembre = 321\,462, frente a una base de meses no-pico que oscila entre 183\,751 (feb) y 226\,442 (nov), con media $\approx$210\,122; el mismo patrón se repite en 2024 (jul = 250\,847, dic = 292\,448). Es estructural y recurrente cada año.
+\textbf{Ruido:} oscilación mes a mes sin patrón --- p.\,ej., 2025: ene 206\,593 $\rightarrow$ feb 183\,751 (-11.06\%) $\rightarrow$ mar 203\,347 (+10.66\%).
+\textbf{Quiebre (Loreto/Ucayali, mar--may 2025):} SED-11 (Iquitos) y SED-12 (Pucallpa) registran \texttt{evento\_contexto}=\enquote{Interrupción logística ficticia} en exactamente 6 de 372 filas. Iquitos cae a 8\,518 / 8\,485 / 7\,459 asistentes (índice $\approx$63.5 / 63.3 / 55.6 sobre su propio enero-2025 = 13\,411); Pucallpa cae a 7\,429 / 7\,109 / 7\,147 (índice $\approx$66.1 / 63.2 / 63.6 sobre enero-2025 = 11\,242). Ambas sedes se recuperan en junio-2025 (Iquitos 13\,665 = índice 101.9; Pucallpa 11\,520 = índice 102.5): es un evento localizado y temporal en forma de \enquote{V}, no una tendencia estructural nueva. El resto de sedes y meses (366/372 filas) marca \enquote{Sin quiebre registrado}, y en 2026 ambas sedes vuelven a esa etiqueta en las 14 filas correspondientes.
+\textbf{Julio 2026:} \texttt{dias\_observados}=12, \texttt{dias\_del\_mes}=31, \texttt{cobertura\_periodo\_pct}=38.71\%, total = 121\,281.
+
+\paragraph{Decisión.}
+Julio-2026 no se etiqueta automáticamente ni como \enquote{caída} ni como \enquote{outlier}. Para sostener \enquote{caída} se necesita una comparación entre periodos homólogos (misma cobertura); comparar el total de 12 días contra el total de 31 días del año anterior --- un \texttt{LOOKUP(..., -12)} ingenuo --- no lo es. Para sostener \enquote{outlier} hay que descartar primero que la anomalía se explique por cobertura: aquí se explica enteramente por ella. Un chequeo sobre las 31 combinaciones año$\times$mes del dataset confirma que julio-2026 (38.71\%) es el \emph{único} periodo con \texttt{cobertura\_periodo\_pct} $<$ 100\% en las 372 filas; todos los demás meses de la serie cierran con cobertura 100\%. El diagnóstico correcto es \textbf{periodo truncado / observación incompleta}, no un evento del negocio. Titular inicial (el que produce el gráfico ingenuo): \enquote{Julio se desploma 57\%: la asistencia colapsa en ChasquiFest.} Titular revisado, tras auditar \texttt{cobertura\_periodo\_pct}: \enquote{Julio-2026 solo tiene 12 de 31 días registrados (38.71\% de cobertura); al ritmo diario observado, la asistencia va +11.5\% por encima de julio-2025} (ver Pregunta~\ref{ssec:c3-q3}).
+
+\paragraph{Límite / trade-off.}
+Clasificar automáticamente por umbral (p.\,ej., \enquote{toda caída $>$50\% es alerta roja}) es peligroso si el \emph{pipeline} de reporting no verifica \texttt{cobertura\_periodo\_pct} antes de calcular variaciones: el mismo dato produce una alerta falsa de crisis o una lectura correcta de crecimiento, según se audite o no la completitud primero.
+
+La Figura~\ref{fig:c3-q1} muestra la serie completa: tendencia leve al alza, picos estacionales de julio y diciembre, la banda del quiebre Loreto/Ucayali (mar--may 2025) y julio-2026 resaltado con su cobertura de 38.71\%.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso3_q1_serie.pdf}
+\caption{Serie mensual de asistentes (todas las sedes, ene-2024 a jul-2026): tendencia leve al alza, picos estacionales de julio y diciembre, banda del quiebre Loreto/Ucayali (mar--may 2025) y julio-2026 truncado a 12 de 31 días (cobertura 38.71\%).}
+\label{fig:c3-q1}
+\end{figure}
+
+\subsection{Pregunta 2 --- Ventana, acumulado y dirección}
+\label{ssec:c3-q2}
+
+\paragraph{Concepto técnico.}
+Una media móvil (\emph{window function} \texttt{WINDOW\_AVG}) suaviza estacionalidad y ruido para leer la dirección reciente del nivel de la serie. Un acumulado (\texttt{RUNNING\_SUM}) mide progreso hacia una meta dentro de una ventana temporal --- típicamente el año --- y, por diseño, es monótono no decreciente si la métrica es siempre $\geq 0$. Responden preguntas distintas (\enquote{tasa/nivel} frente a \enquote{stock acumulado}) y no deben graficarse en el mismo eje sin declarar esa diferencia de semántica \citep{few2009now}.
+
+\paragraph{Evidencia.}
+\begin{lstlisting}[style=cod]
+// (a) Media movil de 3 meses (total festival)
+WINDOW_AVG(SUM([asistentes]), -2, 0)
+// (b) Acumulado que reinicia cada anio (YTD)
+RUNNING_SUM(SUM([asistentes]))
+\end{lstlisting}
+\textbf{(a)} Addressing: \texttt{Along Mes} (table-down si \texttt{Mes} está en filas). Partición: sin partición por sede, porque este cálculo usa el total festival ya agregado por mes (con partición por \texttt{Sede} se obtendría la media móvil de cada sede por separado). Orden: \texttt{Mes} ascendente --- obligatorio para que \texttt{-2,0} tome \enquote{los 2 meses previos + el actual}. Símil pandas: \texttt{serie.groupby('mes')['asistentes'].sum().sort\_index().rolling(3).mean()}.
+\textbf{(b)} Addressing: \texttt{Along Mes}. Partición/reinicio: \texttt{compute using Mes, restarting every Año} --- el acumulado vuelve a 0 en enero de cada año. Orden: \texttt{Mes} ascendente dentro de cada año. Símil pandas: \texttt{serie.groupby('anio')['asistentes'].cumsum()} sobre la serie mensual ya agregada.
+
+\paragraph{Decisión.}
+Para programar el mes siguiente, el \textbf{KPI decisor} es la media móvil de 3 meses (o el YoY por ritmo diario homólogo de la Pregunta~\ref{ssec:c3-q3}): mide dirección real y reciente. El \textbf{contexto} es el acumulado YTD: sirve para verificar avance hacia la meta anual, no para decidir el mes siguiente. El acumulado es una \textbf{falsa tranquilidad} cuando se usa como KPI decisor: YTD hasta julio-2025 (mes completo) = 1\,496\,024; YTD hasta julio-2026 (mes truncado a 12 días) = 1\,487\,219 --- una diferencia de solo -0.59\%, pese a la caída bruta de -56.8\% en julio y al ritmo corregido de +11.5\% (Pregunta~\ref{ssec:c3-q3}). Un lector que solo mira el acumulado concluiría \enquote{vamos casi igual que el año pasado}, sin notar que julio está truncado: seis meses completos ya \enquote{amortiguan} cualquier mes parcial, y el acumulado nunca baja, así que jamás avisaría de un deterioro real hasta muy tarde en el año.
+
+\paragraph{Límite / trade-off.}
+La media móvil de 3 meses retrasa la detección de un quiebre 1--2 meses, y su último punto se contamina si el mes más reciente está truncado: en julio-2026 cae a 199\,654 al incluir el mes parcial, frente a 236\,608 en junio-2026 con 3 meses completos --- no es una lectura limpia del nivel reciente cuando el mes más nuevo no ha cerrado. El YTD, por construcción, nunca decrece (es la suma acumulada de una métrica $\geq0$): en el peor escenario posible seguiría subiendo mes a mes aunque el negocio se esté desplomando, solo que más lento.
+
+La Figura~\ref{fig:c3-q2} separa ambas lecturas en dos paneles: la media móvil de 3 meses (dirección reciente, con su último punto marcado como contaminado por el mes truncado) y el acumulado YTD por año (progreso, que apenas distingue 2025 de 2026 pese a la caída bruta de julio).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso3_q2_ma_ytd.pdf}
+\caption{Panel superior: media móvil de 3 meses del total festival (dirección reciente). Panel inferior: acumulado YTD por año, reiniciado en enero. El acumulado de 2026 prácticamente iguala al de 2025 pese a la caída bruta de julio: la \enquote{falsa tranquilidad} del progreso anual.}
+\label{fig:c3-q2}
+\end{figure}
+
+\subsection{Pregunta 3 --- Comparación interperiodo: el YoY válido para julio 2026}
+\label{ssec:c3-q3}
+
+\paragraph{Concepto técnico.}
+Una comparación año contra año (YoY) solo es válida entre periodos homólogos: misma unidad de exposición (aquí, días observados). \texttt{LOOKUP(SUM([asistentes]), -12)} en una tabla mensual trae, para julio-2026, el valor 12 meses atrás --- julio-2025, con cobertura 100\%. Compararlo directo contra julio-2026 (cobertura 38.71\%) mezcla un mes de 31 días contra uno de 12: no son periodos homólogos, y la diferencia resultante mide sobre todo la diferencia de cobertura, no de desempeño.
+
+\paragraph{Evidencia.}
+\[
+\text{caída bruta} = \frac{\text{asistentes}_{jul26} - \text{asistentes}_{jul25}}{\text{asistentes}_{jul25}} = \frac{121\,281 - 281\,044}{281\,044} = \frac{-159\,763}{281\,044} = -56.8\%
+\]
+compara \textbf{totales de mes} --- magnitudes con exposición distinta (31 días vs. 12 días).
+\[
+\text{cambio de ritmo diario} = \frac{\text{asistentes}_{jul26}/12 - \text{asistentes}_{jul25}/31}{\text{asistentes}_{jul25}/31} = \frac{10\,106.75 - 9\,065.94}{9\,065.94} = \frac{1\,040.80}{9\,065.94} = +11.48\%
+\]
+compara \textbf{tasas por día} --- controla la exposición. El signo se invierte (-56.8\% $\rightarrow$ +11.48\%, redondeado en el titular a -57\% y +11.5\%) sin que ningún dato del CSV cambie: lo único que cambia es el denominador --- \enquote{31 días fijos} del mes completo del año anterior frente a \enquote{días realmente observados} (12) de este año. Es la misma trampa de comparar las ventas totales de una tienda abierta 12 días del mes contra una tienda abierta los 31 días completos, sin normalizar por días de apertura.
+
+\paragraph{Decisión.}
+Tres formas de construir un YoY válido:
+\textbf{(a) Días homólogos.} Ideal: comparar los primeros 12 días de julio-2025 contra los 12 días observados de julio-2026. Limitación de datos: este CSV tiene granularidad mensual $\times$ sede, no diaria --- no existe un campo para aislar \enquote{los primeros 12 días de julio-2025}. Proxy, asumiendo distribución uniforme intramensual: $\text{ritmo}_{25}\times12 = 9\,065.94\times12 = 108\,791.23$ asistentes \enquote{equivalentes a 12 días}, frente al real de julio-2026 (121\,281) $\rightarrow$ +11.48\% (idéntico al cambio de ritmo diario, por construcción lineal).
+\textbf{(b) Esperar el cierre del mes.} Posponer el YoY oficial hasta que \texttt{dias\_observados(Jul26)}=31; mientras tanto, reportar el ritmo diario como indicador provisional, no la variación bruta.
+\textbf{(c) Proyectar, con incertidumbre declarada.} Extrapolar $\text{ritmo}_{26}\times31 = 10\,106.75\times31 = 313\,309.25$ asistentes proyectados, frente a julio-2025 real (281\,044) $\rightarrow$ +11.48\%.
+\begin{lstlisting}[style=cod]
+// YoY bruto (NO valido si difiere cobertura)
+(SUM([asistentes]) - LOOKUP(SUM([asistentes]), -12)) / LOOKUP(SUM([asistentes]), -12)
+// Ritmo diario (version corregida por cobertura)
+SUM([asistentes]) / SUM([dias_observados])
+\end{lstlisting}
+Addressing: \texttt{along Mes} continuo, sin partición por año (para que \texttt{-12} cruce el límite de año). Orden: \texttt{Mes} ascendente. Símil pandas:
+\begin{lstlisting}[style=cod]
+lookup_12 = serie.set_index('mes')['asistentes'].shift(12)
+ritmo = df.groupby(['anio','numero_mes']).apply(
+    lambda g: g['asistentes'].sum() / g['dias_observados'].iloc[0])
+\end{lstlisting}
+Como KPI de contexto adicional, el cumplimiento de meta de julio-2026 --- con \texttt{meta\_asistentes} ya ajustada a los días observados --- es num~=~121\,281 / den~=~120\,838~=~100.37\%: por encima de 100\%, consistente con el ritmo diario +11.5\%, no con una \enquote{caída del 57\%}.
+
+\paragraph{Límite / trade-off.}
+Las opciones (a) y (c) son proxies lineales, no observaciones: ambas asumen afluencia diaria constante dentro del mes (sin efecto fin de semana ni aceleración de cierre), un supuesto no verificable sin datos diarios reales --- por eso coinciden en magnitud (+11.48\%) por pura construcción aritmética. La opción (c) en particular no debe presentarse como cifra oficial de cierre, solo como rango orientativo con el ritmo diario como referencia central; el número real de julio-2026 al cerrarse el mes podría diferir si existe estacionalidad intra-mes no capturada por esta granularidad mensual.
+
+La Figura~\ref{fig:c3-q3} confronta las dos lecturas del mismo dato en un solo eje divergente: la caída bruta (roja, negativa) contra el cambio de ritmo diario (verde, positivo).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso3_q3_signo.pdf}
+\caption{Mismo dato, dos denominadores: la caída bruta de julio (-56.8\%, comparando totales de mes con distinta exposición) se invierte a +11.5\% al comparar el ritmo diario (asistentes por día observado).}
+\label{fig:c3-q3}
+\end{figure}
+
+\subsection{Pregunta 4 --- Comparar las 12 sedes}
+\label{ssec:c3-q4}
+
+\paragraph{Concepto técnico.}
+Los pequeños múltiplos con \textbf{escala común} (mismo eje $Y$ en los 12 paneles) responden \enquote{¿qué sede aporta más volumen absoluto?} --- comparación de magnitud. Los pequeños múltiplos con \textbf{índice base 100} (cada sede reescalada a su propio valor de referencia) responden \enquote{¿qué sede creció, cayó o se recuperó en términos relativos?} --- comparación de forma/recuperación, independiente del tamaño. La segunda vista es la que se necesita cuando las sedes tienen tamaños muy distintos y un quiebre afecta solo a algunas \citep{munzner2014visualization}.
+\[
+\text{índice}_{t} = \frac{\text{asistentes}_t}{\text{asistentes}_{\text{ene-2025}}}\times100 .
+\]
+
+\paragraph{Evidencia.}
+\textbf{Magnitud (escala común):} tamaño medio mensual 2025 --- Lima (SED-01) = 38\,557; Cusco (SED-06) = 23\,500; Arequipa (SED-05) = 22\,333; $\ldots$; Iquitos (SED-11) = 13\,037; Pucallpa (SED-12) = 11\,242 (la más pequeña). Lima es 3.4$\times$ más grande que Pucallpa: en una vista de escala común, la caída de Iquitos/Pucallpa durante el quiebre (a $\sim$7\,100--8\,518) queda visualmente aplastada contra un eje $Y$ dominado por Lima --- el quiebre casi no se nota.
+\textbf{Recuperación relativa (índice base 100, ref. enero-2025):} Iquitos cae a 63.5 (mar-25) $\rightarrow$ 63.3 (abr-25) $\rightarrow$ 55.6 (may-25) y se recupera a 101.9 en jun-25, alcanzando 125.8 en jul-25 (estacionalidad) y 151.0 en dic-25 (pico). Pucallpa: 66.1 $\rightarrow$ 63.2 $\rightarrow$ 63.6, recupera 102.5 en jun-25 y 154.0 en dic-25. Lima, en la misma ventana, solo fluctúa por estacionalidad normal (106.4 en mar-25, 99.9 en abr-25, 112.9 en may-25, sin ningún \emph{dip}). El índice hace visible una \enquote{V} clara de caída y recuperación en 3 meses que la vista de escala común esconde por completo.
+
+\paragraph{Decisión.}
+Se mantiene 1 punto por mes $\times$ sede en ambas vistas --- sin agregar a trimestre o año --- con 12 paneles (uno por sede), eje $X$ = mes, ene-2024 a jul-2026. El quiebre se anota sin confundirlo con tendencia estructural: una banda sombreada entre 2025-03 y 2025-05, aplicada \emph{solo} en los paneles de Loreto y Ucayali, con la etiqueta explícita \enquote{Interrupción logística ficticia (evento puntual, 6/372 filas)} --- distinta de la banda de estacionalidad (jul/dic, que sí es recurrente y estructural). En 2026 ambas sedes vuelven a \enquote{Sin quiebre registrado}, confirmando que no es una tendencia nueva.
+
+\paragraph{Límite / trade-off.}
+El índice base 100 oculta la magnitud absoluta: una sede pequeña con alta variabilidad relativa puede parecer \enquote{más dramática} que Lima aunque mueva muchas menos personas en términos absolutos. Ninguna de las dos vistas reemplaza a la otra: se presentan una al lado de la otra, cada una etiquetada con la pregunta que responde.
+
+La Figura~\ref{fig:c3-q4} indexa las 12 sedes a base 100 (ene-2025=100), resaltando Iquitos y Pucallpa sobre el resto en gris.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso3_q4_index.pdf}
+\caption{Índice base 100 (ene-2025=100) por sede. Iquitos y Pucallpa (color) muestran la V de caída y recuperación del quiebre logístico (mar--may 2025); el resto de sedes (gris) solo fluctúa por estacionalidad, sin quiebre.}
+\label{fig:c3-q4}
+\end{figure}
+
+\bitacora{Lima domina el festival; las demás sedes parecen estancadas o irrelevantes.}{Índice de recuperación post-quiebre, \(\text{índice}_t=(\text{asistentes}_t/\text{asistentes}_{\text{ene-2025}})\times100\); periodo mar--jun 2025; segmento Loreto (Iquitos, SED-11) y Ucayali (Pucallpa, SED-12); meta \(\text{índice}\ge100\) en junio-2025.}{Al indexar cada sede a base 100, Loreto y Ucayali muestran una V completa (63$\rightarrow$101 en 3 meses) que la vista de escala común, dominada por Lima, no deja ver.}{El quiebre fue real pero temporal; ambas sedes se recuperaron para junio-2025.}{El comité debería evaluar la resiliencia logística de Loreto/Ucayali (tiempo de recuperación) en vez de recortar presupuesto por \enquote{bajo desempeño} --- una decisión que solo emerge al mirar recuperación relativa y que la vista de magnitud absoluta, dominada por Lima, habría llevado a ignorar o mal-interpretar como debilidad estructural de la Selva.}
+
+\paragraph{Síntesis del caso.}
+Los cinco números ancla del enunciado se reproducen exactamente desde el CSV: total julio-2025 = 281\,044; total julio-2026 = 121\,281; cobertura julio-2026 = 38.71\%; caída bruta = -56.85\% ($\approx$ el titular -57\%); cambio de ritmo diario = +11.48\%. El hallazgo central es metodológico, no de negocio: el \enquote{colapso} de julio-2026 es un artefacto de comparar un mes truncado (12/31 días) contra un mes cerrado, no una caída real de asistencia. Corregido por cobertura, tanto el ritmo diario como el cumplimiento de meta (121\,281 / 120\,838 = 100.37\%) muestran a ChasquiFest por encima del año anterior.

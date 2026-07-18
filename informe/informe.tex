@@ -1,0 +1,143 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{csquotes}
+\usepackage[round,authoryear]{natbib}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+\onehalfspacing
+\setlist[itemize]{leftmargin=1.4em,itemsep=0.2em,topsep=0.2em}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=0.2em,topsep=0.2em}
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figuras/}}
+
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+
+% --- colores y estilo de código (Tableau / pandas) ---
+\definecolor{codbg}{HTML}{F5F5F2}
+\definecolor{codkw}{HTML}{2A78D6}
+\definecolor{codcm}{HTML}{6E6D68}
+\definecolor{codst}{HTML}{008300}
+\definecolor{acento}{HTML}{4A3AA7}
+\lstdefinestyle{cod}{
+  backgroundcolor=\color{codbg}, basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{codkw}\bfseries, commentstyle=\color{codcm}\itshape,
+  stringstyle=\color{codst}, breaklines=true, showstringspaces=false,
+  columns=fullflexible, frame=leftline, framerule=1.2pt, rulecolor=\color{acento},
+  xleftmargin=0.8em, framexleftmargin=0.8em, aboveskip=0.7em, belowskip=0.5em,
+  morekeywords={FIXED,TOTAL,SUM,AVG,MEDIAN,PERCENTILE,WINDOW_AVG,RUNNING_SUM,
+  LOOKUP,RANK,CORR,ZN,IIF,CASE,WHEN,THEN,ELSE,END}
+}
+\lstset{style=cod}
+
+% --- comando para la bitácora (protocolo de la pregunta 4) ---
+\newcommand{\bitacora}[5]{%
+\begin{enumerate}[label=\textbf{\arabic*.},leftmargin=1.8em]
+  \item \textbf{Lectura inicial:} #1
+  \item \textbf{KPI decisor:} #2
+  \item \textbf{Giro analítico:} #3
+  \item \textbf{Lectura revisada:} #4
+  \item \textbf{Consecuencia:} #5
+\end{enumerate}}
+
+\begin{document}
+
+% ======================= CARÁTULA =======================
+\begin{titlepage}
+\centering
+\vspace*{1.4cm}
+\IfFileExists{upc-logo.png}{\includegraphics[width=3.2cm]{upc-logo.png}\\[1cm]}{\vspace{1cm}}
+{\Large\textbf{UNIVERSIDAD PERUANA DE CIENCIAS APLICADAS}}\\[0.3cm]
+{\large Facultad de Ingeniería}\\
+{\large Ciencia de la Computación}\\[1.6cm]
+{\large\textbf{Visualización de Datos}}\\
+{\large Examen Final}\\[1.6cm]
+{\LARGE\textbf{Operación ChasquiFest}}\\[0.35cm]
+{\Large auditoría de visualización de cinco casos}\\[0.6cm]
+{\large\itshape Qué se puede afirmar, cómo debe medirse y qué gráfico permite decidir}\\[2.2cm]
+\textbf{Estudiante:}\\
+Rody Sebastian Vilchez Marin (U202216562)\\[1.4cm]
+\vfill
+Lima, Perú\\
+2026
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ======================= INTRODUCCIÓN =======================
+\section{Introducción}
+
+ChasquiFest es una gira cultural ficticia que llevó música, gastronomía, diseño y tecnología a doce sedes del Perú. Killa, la llama-mascota, se volvió viral; el patrocinador ya mandó imprimir un cartel que dice \emph{éxito histórico} y el comité directivo se reúne en dos horas. El problema es que el \emph{workbook} que sustenta esa afirmación mezcla porcentajes no aditivos, escalas distorsionadas, ventanas temporales no homólogas y conclusiones causales extraídas de asociaciones observacionales.
+
+Este informe adopta el rol de \textbf{auditoría visual}. Para cada uno de cinco casos se toma un gráfico engañoso del tablero original y se decide, con evidencia recalculada desde los datos, qué se puede afirmar, cómo debe medirse el indicador y qué visualización permite tomar la decisión sin convertir una correlación simpática en una ley de la naturaleza. La tesis transversal es simple: en analítica de decisión, \emph{el denominador, la ventana temporal y el canal perceptual eligen la conclusión tanto como el dato} \citep{cleveland1984graphical,tufte2001visual}.
+
+Todo el festival, sus personajes y sus cifras son \textbf{ficticios y sintéticos}. Los nombres geográficos se usan para dar contexto peruano; los datos no describen el desempeño real de ninguna ciudad ni población.
+
+% ======================= METODOLOGÍA =======================
+\section{Metodología}
+
+\subsection{Datos y herramientas}
+El material son cinco archivos CSV sintéticos, uno por caso, con granularidad declarada distinta (una fila por evento$\times$canal en el Caso~1; por envío en el Caso~2; por mes$\times$sede en el Caso~3; por sede en el Caso~4; por fecha$\times$sede en el Caso~5). Todo cálculo se recomputa desde el CSV con \texttt{pandas}; las figuras se generan con \texttt{matplotlib} sobre una hoja de estilo común (tipografía serif, paleta \emph{colorblind-safe} validada, ejes recesivos y salida vectorial). Donde el examen pide una fórmula de Tableau se ofrece la sintaxis Tableau y su símil en código. El proyecto es reproducible: notebooks ejecutables por caso y datos acompañan a este informe.\footnote{Repositorio y notebooks: \url{https://github.com/R0SEWT/chasquifest-auditoria-visual}}
+
+\subsection{Regla de auditoría y criterios de calidad}
+Cada respuesta se construye con cuatro piezas cuando corresponden: (1)~el \textbf{concepto técnico}; (2)~la \textbf{evidencia} con campos y números concretos del dataset; (3)~la \textbf{decisión} de cálculo o de diseño; y (4)~un \textbf{límite} o \emph{trade-off}. Además, el informe se somete a seis criterios de rigor que funcionan como controles de calidad:
+
+\begin{itemize}
+  \item Todo porcentaje declara \textbf{numerador y denominador}.
+  \item Toda recomendación de gráfico nombra la \textbf{tarea analítica} (comparar, correlacionar, ver distribución, \emph{ranking}, parte-todo, tendencia, localización).
+  \item Toda \emph{table calculation} declara \textbf{partición} y \emph{addressing}.
+  \item Ninguna comparación entre periodos se hace sin verificar \textbf{homologación}.
+  \item Ninguna \textbf{causalidad} se afirma a partir de asociación observacional \citep{simpson1951interpretation,anscombe1973graphs}.
+  \item Todo KPI se presenta con \textbf{periodo, comparación/meta y decisión} asociada.
+\end{itemize}
+
+La pregunta~4 de cada caso cierra con una \textbf{bitácora} de cinco frases (lectura inicial, KPI decisor, giro analítico, lectura revisada y consecuencia) que documenta explícitamente qué evidencia obligó a abandonar o matizar la primera interpretación.
+
+% ======================= CASOS =======================
+\input{secciones/caso1}
+\input{secciones/caso2}
+\input{secciones/caso3}
+\input{secciones/caso4}
+\input{secciones/caso5}
+
+% ======================= CONCLUSIONES =======================
+\section{Conclusiones}
+
+Los cinco casos comparten una misma moraleja operativa: antes de leer la magnitud hay que fijar el \emph{marco de medición}. En el Caso~1 el marco es el \textbf{denominador} (un promedio ponderado no es el promedio de los ratios de fila); en el Caso~3 es la \textbf{ventana temporal} (doce días no se comparan con treinta y uno); en el Caso~4 es la \textbf{normalización} (volumen y tasa poblacional responden preguntas distintas); en los Casos~2 y~5 es la \textbf{estructura causal} (una asociación observacional, por fuerte que sea su $R^2$, no identifica un efecto sin control de confusores). En todos, el canal perceptual elegido —ángulo de una torta, área de una burbuja, doce colores superpuestos— puede sostener o desmentir la historia con el mismo dato \citep{cleveland1984graphical,munzner2014visualization}. La auditoría no consiste en desconfiar de los números, sino en declarar el marco que los vuelve interpretables y elegir la vista cuya tarea coincide con la decisión.
+
+\begin{thebibliography}{10}
+\bibitem[Anscombe(1973)]{anscombe1973graphs} Anscombe, F. J. (1973). Graphs in statistical analysis. \emph{The American Statistician, 27}(1), 17--21.
+\bibitem[Cleveland \& McGill(1984)]{cleveland1984graphical} Cleveland, W. S., \& McGill, R. (1984). Graphical perception: Theory, experimentation, and application to the development of graphical methods. \emph{Journal of the American Statistical Association, 79}(387), 531--554.
+\bibitem[Few(2009)]{few2009now} Few, S. (2009). \emph{Now You See It: Simple Visualization Techniques for Quantitative Analysis}. Analytics Press.
+\bibitem[Gelman(2007)]{gelman2007average} Gelman, A. (2007). Struggles with survey weighting and regression modeling. \emph{Statistical Science, 22}(2), 153--164.
+\bibitem[Healy(2018)]{healy2018data} Healy, K. (2018). \emph{Data Visualization: A Practical Introduction}. Princeton University Press.
+\bibitem[Munzner(2014)]{munzner2014visualization} Munzner, T. (2014). \emph{Visualization Analysis and Design}. CRC Press.
+\bibitem[Simpson(1951)]{simpson1951interpretation} Simpson, E. H. (1951). The interpretation of interaction in contingency tables. \emph{Journal of the Royal Statistical Society: Series B, 13}(2), 238--241.
+\bibitem[Tufte(2001)]{tufte2001visual} Tufte, E. R. (2001). \emph{The Visual Display of Quantitative Information} (2nd ed.). Graphics Press.
+\bibitem[Wickham(2016)]{wickham2016ggplot2} Wickham, H. (2016). \emph{ggplot2: Elegant Graphics for Data Analysis} (2nd ed.). Springer.
+\bibitem[Wilkinson(2005)]{wilkinson2005grammar} Wilkinson, L. (2005). \emph{The Grammar of Graphics} (2nd ed.). Springer.
+\end{thebibliography}
+
+\end{document}

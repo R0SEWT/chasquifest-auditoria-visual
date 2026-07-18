@@ -1,0 +1,168 @@
+\section{Caso 4 --- El mapa de la pasión que en realidad era el mapa del tamaño}
+\label{sec:caso4}
+
+El comité recibió un mapa de burbujas con asistencias \emph{absolutas} por sede: Lima tenía la burbuja mayor, el \textbf{diámetro} del símbolo se había escalado linealmente al valor (lo que distorsiona el \textbf{área} percibida) y el colormap \texttt{jet} pintaba una falsa ``montaña de intensidad''. El título concluía que Lima ``ama más'' al festival. Población, capacidad instalada y tasas normalizadas no llegaron a esa reunión, y sin ellas el comité no puede decidir dónde reforzar seguridad, dónde ampliar alcance ni dónde mejorar la experiencia.
+
+\textbf{Granularidad del dataset:} una fila equivale a una sede/departamento del año 2025 (12 sedes, 12 eventos cada una). No existe una segunda columna de año, de modo que \textbf{todas} las comparaciones de este caso son intra-2025 (periodos homólogos por construcción; no se compara contra otro año porque el CSV no lo contiene).
+
+Antes de rankear nada se verificaron las cuatro tasas ya provistas en el CSV: \texttt{alcance\_por\_1000\_hab}, \texttt{reclamos\_por\_10000\_asistencias}, \texttt{ocupacion\_pct} y \texttt{costo\_por\_asistente\_soles}. Recalculadas fila a fila como numerador/denominador, la diferencia máxima absoluta contra el valor publicado en el CSV fue menor a 0.01 en las cuatro (redondeo de fuente): quedan confirmadas como fórmulas explícitas, no como agregados opacos.
+
+\subsection{Pregunta 1 --- Un ranking por decisión}
+\label{ssec:c4-q1}
+
+Cada decisión del comité necesita una métrica distinta, con un \textbf{denominador distinto}. Ninguna de las tres es ``la verdadera'': responden preguntas diferentes.
+
+\textbf{(a) Volumen --- asignar personal de seguridad.}
+
+\paragraph{Concepto técnico.} Aforo absoluto: conteo de asistencias, no de personas distintas. Mide carga operativa total a custodiar; no se normaliza porque la seguridad se dimensiona contra multitudes físicas reales, no contra tasas.
+
+\paragraph{Evidencia.} Métrica \texttt{asistentes\_2025}; numerador = asistencias 2025, \textbf{denominador = ninguno} (magnitud absoluta, no una tasa). Los cinco primeros lugares: Lima 462\,690, Cusco 281\,998, Arequipa 268\,001, Trujillo 253\,960 y Piura 246\,920 (Tabla~\ref{tab:c4-rankings}, columna Volumen).
+
+\paragraph{Decisión.} \textbf{Tableau:} \lstinline{SUM([asistentes_2025])} con \emph{table calc} \lstinline{RANK(SUM([asistentes_2025]))}. Partición: ninguna (la tabla completa; granularidad = 1 fila/sede, un solo año). \emph{Addressing}: Ciudad/Departamento (el ranking recorre esa dimensión). \textbf{pandas:} \lstinline{df['asistentes_2025'].rank(ascending=False)}.
+
+\paragraph{Límite / trade-off.} Ignora la ocupación relativa del recinto. Tarapoto opera al \textbf{92.46\%} de su capacidad (156\,388/169\,146 = asistentes\_2025/capacidad\_anual\_2025) --- la ocupación más alta de las 12 sedes--- pero por volumen bruto cae al puesto \#9, recibiendo relativamente poco refuerzo si el criterio fuera solo volumen. Riesgo: sedes pequeñas casi llenas quedan sub-atendidas en seguridad.
+
+\textbf{(b) Tasa poblacional --- comparar alcance territorial.}
+
+\paragraph{Concepto técnico.} Penetración territorial: cuántas personas \emph{distintas} de la población de referencia fueron alcanzadas, normalizando por tamaño poblacional para comparar sedes de escala muy distinta.
+
+\paragraph{Evidencia.}
+\[
+\texttt{alcance\_por\_1000\_hab} = \frac{\texttt{visitantes\_unicos\_2025}}{\texttt{poblacion\_referencial}} \times 1000
+\]
+(confirmado, diferencia máxima 0.0043 frente al recálculo). Numerador = visitantes únicos 2025; denominador = población referencial. Los cinco primeros: Cusco 157.89 (221\,678/1\,404\,000), Ayacucho 146.86 (98\,130/668\,200), Pucallpa 135.62 (87\,911/648\,200), Tarapoto 126.07 (117\,551/932\,400) y Arequipa 123.90 (202\,092/1\,631\,100). Lima cae al último lugar de las 12 sedes con \textbf{31.96} (324\,391/10\,151\,200).
+
+\paragraph{Decisión.} \textbf{Tableau:} \lstinline{SUM([visitantes_unicos_2025])/SUM([poblacion_referencial])*1000}, con \lstinline{RANK(...)}. Partición: ninguna. \emph{Addressing}: Ciudad/Departamento. \textbf{pandas:} \lstinline{(df.visitantes_unicos_2025/df.poblacion_referencial*1000).rank(ascending=False)}.
+
+\paragraph{Límite / trade-off.} Premia poblaciones chicas. Pucallpa (población 648\,200, la más pequeña de las 12) entra al podio de alcance, mientras Lima --- con 10\,151\,200 hab., 15.7 veces la población de Pucallpa--- queda relegada, aunque en términos absolutos deja sin cubrir a \textbf{9\,826\,809 personas (96.80\% de su población referencial)} que nunca asistieron en 2025. Ese mercado sin explotar no aparece en un ranking de tasas.
+
+\textbf{(c) Tasa de reclamos --- priorizar calidad operativa.}
+
+\paragraph{Concepto técnico.} Intensidad de fricción por unidad de actividad: normaliza reclamos por volumen de asistencia para comparar ``calidad percibida'' entre sedes de tamaño distinto.
+
+\paragraph{Evidencia.}
+\[
+\texttt{reclamos\_por\_10000\_asistencias} = \frac{\texttt{reclamos\_totales}}{\texttt{asistentes\_2025}} \times 10000
+\]
+(confirmado, diferencia máxima 0.0046). Numerador = reclamos totales; denominador = asistencias 2025 (no visitantes únicos). Los cinco peores: Cusco 69.01 (1\,946/281\,998), Ayacucho 65.58 (973/148\,376), Piura 62.61 (1\,546/246\,920), Pucallpa 54.78 (739/134\,905) y Lima 42.92 (1\,986/462\,690).
+
+\paragraph{Decisión.} \textbf{Tableau:} \lstinline{SUM([reclamos_totales])/SUM([asistentes_2025])*10000}, con \lstinline{RANK(...)} descendente (mayor tasa = peor). Partición: ninguna. \emph{Addressing}: Ciudad/Departamento. \textbf{pandas:} \lstinline{(df.reclamos_totales/df.asistentes_2025*10000).rank(ascending=False)}.
+
+\paragraph{Límite / trade-off.} Puede castigar sedes con mejor cultura o mayor accesibilidad de canales de reporte (más fácil quejarse produce más reclamos registrados, no necesariamente peor servicio), o premiar sedes con canales pobres. Puno tiene la tasa más baja (18.41): no puede afirmarse causalmente que da mejor servicio --- podría tener menos canales de reporte (asociación, no causalidad). Dato de contexto: en Cusco solo el \textbf{16.70\%} de sus 1\,946 reclamos son de accesibilidad (\texttt{reclamos\_accesibilidad} = 325) --- el porcentaje más bajo de las 12 sedes--- lo que sugiere que su fricción no es solo de accesibilidad, aunque tampoco prueba causa-raíz sin investigación cualitativa adicional.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Los cinco primeros lugares de cada ranking, 2025 (12 sedes). El líder cambia con el denominador.}
+\label{tab:c4-rankings}
+\begin{tabular}{c l l l}
+\toprule
+Puesto & Volumen (asistentes\_2025) & Alcance (/1\,000 hab.) & Reclamos (/10\,000 asist.) \\
+\midrule
+1 & Lima (462\,690) & Cusco (157.89) & Cusco (69.01) \\
+2 & Cusco (281\,998) & Ayacucho (146.86) & Ayacucho (65.58) \\
+3 & Arequipa (268\,001) & Pucallpa (135.62) & Piura (62.61) \\
+4 & Trujillo (253\,960) & Tarapoto (126.07) & Pucallpa (54.78) \\
+5 & Piura (246\,920) & Arequipa (123.90) & Lima (42.92) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Evidencia del reordenamiento.} Lima pasa de \#1 en volumen a \#12 (último lugar) en alcance y \#5 en reclamos; Cusco pasa de \#2 en volumen a \#1 en alcance \emph{y} \#1 en reclamos simultáneamente. Ninguno de los tres rankings es falso: miden objetivos distintos con denominadores distintos. Volumen (sin denominador) responde ``¿dónde hay más gente físicamente?''; alcance (denominador = población) responde ``¿qué proporción del territorio se activó?''; reclamos (denominador = asistencias) responde ``¿qué tan fricción-intensiva es la experiencia por visita?''. Lima domina el primero porque concentra el \textbf{41.05\%} de la población de referencia nacional (10\,151\,200/24\,729\,200) pero solo el \textbf{17.11\%} de las asistencias totales (462\,690/2\,703\,721): es grande en términos absolutos pero relativamente poco penetrada. Cusco lidera el segundo \emph{y} es alto en el tercero al mismo tiempo --- alta penetración y alta fricción no son contradictorias, son dos caras de una sede muy demandada relativa a su tamaño.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\linewidth]{caso4_q1_rankings.pdf}
+\caption{Tarea analítica: \emph{ranking} / comparación de magnitud. Tres barras horizontales ordenadas, una por métrica, mismas 12 sedes. El canal usado es posición en eje --- el que Cleveland y McGill \citep{cleveland1984graphical} identifican como el más preciso para juicios de magnitud, muy superior a área o color. Lima (rojo) y Cusco (azul) se resaltan para visualizar el reordenamiento.}
+\label{fig:c4-q1}
+\end{figure}
+
+\subsection{Pregunta 2 --- Mapa o barra}
+\label{ssec:c4-q2}
+
+\paragraph{Concepto técnico.} Dos preguntas distintas exigen dos tareas analíticas distintas, y cada tarea exige un tipo de gráfico distinto \citep{munzner2014visualization}. ``¿Dónde?'' exige un \textbf{mapa} (tarea: localización geográfica / distribución espacial), usando \texttt{latitud}/\texttt{longitud} para posicionar cada sede en su ubicación real: símbolos proporcionales (\emph{bubble map}) cuando la variable es un conteo/volumen absoluto (\texttt{asistentes\_2025}), porque el tamaño del símbolo codifica magnitud sin inflar el área del polígono territorial que ya de por sí varía por departamento; un coroplético \emph{normalizado} queda reservado para tasas por población o por actividad (\texttt{alcance\_por\_1000\_hab}, \texttt{reclamos\_por\_10000\_asistencias}, \texttt{ocupacion\_pct}), porque el color debe representar algo \emph{por unidad} de esa área o población, no un conteo bruto. ``¿Quién lidera y por cuánto?'' exige una \textbf{barra ordenada} (tarea: ranking / comparación de magnitud, canal = posición en eje): ordenar descendente por la métrica elegida, eje corto = categoría (sede), eje largo = valor, con etiquetas numéricas directas para lectura exacta (Figura~\ref{fig:c4-q1}).
+
+\paragraph{Evidencia.} Si se pintara el departamento de Lima con el color más intenso solo por tener 462\,690 asistencias, el mapa terminaría mostrando ``dónde vive más gente'', no ``dónde el festival tuvo más impacto relativo''. Lima tiene 10\,151\,200 habitantes, el \textbf{41.05\%} de la población de referencia total (10\,151\,200/24\,729\,200); cualquier conteo bruto (asistentes, reclamos totales, costo público) se correlaciona mecánicamente con población, y las áreas grandes/pobladas ``ganan'' siempre en un coroplético de conteos, sin importar la variable. Dos titulares compiten por la atención del comité, y ambos son ciertos: \textbf{Volumen} --- ``Lima concentra 462\,690 asistencias, el mayor aforo'' (Ranking 1, P1a); \textbf{Alcance} --- ``Cusco alcanza 158 visitantes por mil habitantes, el mayor alcance por habitante'' (Ranking 2, P1b).
+
+\paragraph{Decisión.} Cada titular apunta a un recurso distinto del comité; no son intercambiables. Volumen $\rightarrow$ reforzar personal de seguridad y logística de multitudes en Lima (Pregunta 1a): responde a carga física absoluta, sin denominador. Alcance $\rightarrow$ estudiar la experiencia y calidad de servicio en Cusco (Pregunta 1c), no necesariamente expandir infraestructura física: responde a penetración relativa a la población, no a volumen. La Figura~\ref{fig:c4-q2} implementa el mapa correcto: área del símbolo $\propto$ \texttt{asistentes\_2025} y color en \texttt{viridis} sobre \texttt{alcance\_por\_1000\_hab}, con la barra ordenada de la Figura~\ref{fig:c4-q1} como vista de soporte para el ranking.
+
+\paragraph{Límite / trade-off.} Una tasa alta no es evidencia de causa ni de afecto --- el mismo error que decir ``Cusco ama más''. La \texttt{ocupacion\_pct} de Cusco es \textbf{74.96\%}, la más baja de las 12 sedes, de modo que el alto alcance y la alta tasa de reclamos de Cusco (69.01, Pregunta 1c) \textbf{no} se explican por saturación física del recinto (no está ``lleno''); apuntan más bien a gestión de flujos, servicios o accesibilidad, algo que solo una investigación cualitativa adicional podría confirmar. ``Mayor alcance por habitante'' describe una tasa de penetración territorial, no un sentimiento de apego: inferir ``arraigo'' o ``amor'' a partir de \texttt{alcance\_por\_1000\_hab} cometería el mismo salto lógico (tasa $\rightarrow$ causa/afecto) que el titular original del mapa de burbujas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso4_q2_mapa.pdf}
+\caption{Tarea analítica: localización geográfica + tasa normalizada. Las 12 sedes posicionadas por \texttt{latitud}/\texttt{longitud}; área del símbolo $\propto$ \texttt{asistentes\_2025} (volumen absoluto); color \texttt{viridis} sobre \texttt{alcance\_por\_1000\_hab} (tasa), con la etiqueta numérica directa del valor de alcance sobre cada sede como canal redundante al color. Lima es la burbuja más grande y, a la vez, la de color más oscuro (menor alcance); Cusco es una burbuja mediana pero la más clara (mayor alcance).}
+\label{fig:c4-q2}
+\end{figure}
+
+\subsection{Pregunta 3 --- Área, color y acceso}
+\label{ssec:c4-q3}
+
+\paragraph{Concepto técnico.} El error clásico de ``burbuja mal escalada''. Si el \textbf{diámetro} se escala linealmente al valor, el \textbf{área} --- lo que el ojo realmente integra al leer un círculo \citep{cleveland1984graphical} --- crece con el \textbf{cuadrado} del valor, exagerando visualmente las diferencias.
+
+\paragraph{Evidencia.} Con números reales: Lima (462\,690 asistentes) frente a Pucallpa (134\,905 asistentes), razón de valores
+\[
+r = \frac{462\,690}{134\,905} = 3.4297\times.
+\]
+Con diámetro $\propto$ valor: razón de diámetros = $r = 3.4297\times$, pero razón de \textbf{áreas} = $r^2 = 11.7632\times$. El área de la burbuja de Lima aparece \textbf{11.76 veces} más grande que la de Pucallpa aunque el dato real es solo \textbf{3.43 veces} mayor --- una sobre-representación visual adicional de exactamente $r^2/r = r = 3.4297\times$.
+
+\paragraph{Decisión.} Escalar por \textbf{área}, no por diámetro:
+\[
+\text{área} \propto \text{valor} \;\Longleftrightarrow\; \text{diámetro} \propto \sqrt{\text{valor}}.
+\]
+Con esta corrección, razón de diámetros = $\sqrt{r} = 1.8520\times$, razón de áreas = $(\sqrt{r})^2 = 3.4297\times$, que coincide exactamente con la razón real de asistencias. \textbf{Tableau:} en el estante \emph{Size}, Tableau ya escala por defecto el \textbf{área} del símbolo (no el diámetro) al soltar un campo continuo --- el error típicamente ocurre en herramientas o código que fijan \texttt{markersize}/\texttt{radius} de forma lineal. \textbf{pandas/matplotlib:}
+\begin{lstlisting}[style=cod]
+s = k * valor   # plt.scatter interpreta 's' como AREA en puntos^2: correcto
+markersize = k * valor  # plt.plot: markersize es DIAMETRO lineal -> error equivalente
+\end{lstlisting}
+
+\paragraph{Límite / trade-off.} Incluso corregido por área, el ojo humano \textbf{subestima} áreas grandes (compresión de Stevens, exponente $\approx 0.7$ para área), así que ningún \emph{bubble map} da lectura cuantitativa exacta; por eso debe acompañarse siempre de una etiqueta numérica directa o de una barra ordenada (canal de posición) para lectura precisa.
+
+\textbf{Reemplazo de colormap.} \texttt{jet} no es perceptualmente uniforme: su luminancia no es monótona, crea falsos bordes/bandas de contorno que no corresponden a discontinuidades reales en los datos, y no es legible en escala de grises ni amigable para daltonismo rojo-verde (deuteranopía/protanopía). Reemplazo: \textbf{viridis} (o \textbf{cividis}, optimizado específicamente para deuteranopía) --- luminancia monótonamente creciente, perceptualmente uniforme en CIELAB, legible en escala de grises.
+
+\textbf{Dos canales redundantes} (mantienen la lectura con daltonismo o en escala de grises, sin depender del color, presentes en la Figura~\ref{fig:c4-q2}): (1)~etiqueta numérica directa sobre cada símbolo con el valor de \texttt{alcance\_por\_1000\_hab} (p. ej. ``Cusco 158''), que permite leer exactamente la variable codificada en color sin decodificar el tono; (2)~tamaño/área del símbolo ($\propto$ \texttt{asistentes\_2025}) como segundo canal, ordinal y perceptible incluso en escala de grises, que separa visualmente a Lima del resto sin necesitar distinguir colores.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{caso4_q3_distorsion.pdf}
+\caption{Demostración numérica de la distorsión diámetro-vs-área, Lima vs. Pucallpa (\texttt{asistentes\_2025}). Izquierda: diámetro $\propto$ valor (incorrecto), el área aparente exagera la razón real en un factor $r$ adicional. Derecha: área $\propto$ valor (corregido), el área aparente coincide exactamente con la razón real de asistencias.}
+\label{fig:c4-q3}
+\end{figure}
+
+\subsection{Pregunta 4 --- Dashboard de decisión}
+\label{ssec:c4-q4}
+
+\paragraph{Concepto técnico.} Un dashboard de decisión reemplaza el mapa único por una vista compuesta: una franja de KPI con estado semáforo, una vista principal de localización (mapa corregido), una vista de soporte de ranking (barra ordenada) y un panel de insights textuales, todo con el mismo periodo, segmento y fuente declarados.
+
+\paragraph{Evidencia.} Los cuatro KPI nacionales de 2025 se agregan como \textbf{ratio-de-sumas} ($\mathrm{SUM(num)}/\mathrm{SUM(den)}$), no como promedio-de-tasas, para evitar el sesgo de ponderación por tamaño de sede \citep{gelman2007average}: la ocupación agregada nacional es \textbf{83.89\%} (2\,703\,721/3\,222\,747) frente al promedio simple de \texttt{ocupacion\_pct} por sede de \textbf{84.75\%} --- no son lo mismo, porque el promedio simple pondera igual a Pucallpa (capacidad 146\,046) que a Lima (capacidad 556\,171). En Tableau esto se expresa con un LOD fijo:
+\begin{lstlisting}[style=cod]
+{FIXED : SUM([reclamos_totales])/SUM([asistentes_2025])*10000}   // ratio-de-sumas, correcto
+AVG([reclamos_por_10000_asistencias])                            // promedio de tasas, NO equivalente
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Los cuatro KPI del dashboard, 2025 (agregado nacional = ratio-de-sumas). Meta = benchmark interno (mediana de las 12 sedes), declarado por este análisis; el CSV no trae una meta oficial del comité.}
+\label{tab:c4-kpi}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash\ttfamily\scriptsize}p{5.2cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.3cm}@{}}
+\toprule
+Rol & KPI (fórmula) & Valor 2025 (num./den.) & Estado (brecha) \\
+\midrule
+RESULTADO & asistentes\_2025 / capacidad\_anual\_2025 $\times$100 & 83.89\% (2\,703\,721/3\,222\,747); meta $\geq 85\%$ & AMARILLO ($-1.11$ pp) \\
+EFICIENCIA & costo\_publico\_soles / asistentes\_2025 & S/~14.03; meta $\leq$ S/~13.64 (mediana) & ROJO ($+2.84\%$) \\
+RIESGO & reclamos\_totales / asistentes\_2025 $\times$10000 & 42.02; meta $\leq 41.27$ (mediana) & ROJO/ALERTA ($+1.83\%$) \\
+ALCANCE/\newline EQUIDAD & visitantes\_unicos\_2025 / poblacion\_referencial $\times$1000 & 79.58; meta $\geq 116.67$ (mediana) & ROJO ($-31.79\%$) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Decisión.} Cada tarjeta enlaza directamente con una acción. \textbf{RESULTADO} (AMARILLO): revisar programación y franjas horarias en sedes con capacidad ociosa para cerrar la brecha de $-1.11$ pp hacia la meta. \textbf{EFICIENCIA} (ROJO): auditar y renegociar costos logísticos en las sedes sobre la mediana (máximo Chiclayo, S/~18.56/asistente; mínimo Piura, S/~9.72/asistente) para converger a S/~13.64/asistente. \textbf{RIESGO} (ROJO/ALERTA): reforzar atención al público y protocolos de accesibilidad en las cuatro sedes de la zona crítica (tasa $>50$/10\,000): Cusco (69.01), Ayacucho (65.58), Piura (62.61) y Pucallpa (54.78), en ese orden de prioridad. \textbf{ALCANCE/EQUIDAD} (ROJO): priorizar campañas de difusión y nuevas franjas o sedes en departamentos bajo la mediana de alcance (brecha $-31.79\%$).
+
+Ejemplo de tarjeta completa (RIESGO, la más ligada a seguridad/experiencia): \textbf{valor} 42.02 reclamos por cada 10\,000 asistencias; \textbf{periodo} 2025 (año completo, 12 eventos por sede; único periodo disponible en el CSV, no se compara con otro año); \textbf{segmento} las 12 sedes/departamentos (agregado nacional = ratio-de-sumas); \textbf{comparación/meta} mediana de sedes = 41.27 (línea de referencia), meta operativa propuesta $\leq 40.00$ (declarada por este análisis, límite explícito, no viene en el CSV); \textbf{estado} semáforo ROJO/ÁMBAR; \textbf{acción} asignar equipos de atención al público y revisar protocolos de accesibilidad en Cusco, Ayacucho, Piura y Pucallpa, en ese orden (orden = magnitud de la tasa, no del volumen absoluto).
+
+El \textbf{layout} (1280$\times$720~px, cinco filas) coloca: (1)~título-pregunta; (2)~franja de 4 tarjetas KPI con estado semáforo; (3)~vista principal a la izquierda ($\sim$800~px) con el mapa de símbolos proporcionales de la Figura~\ref{fig:c4-q2} (tarea: localización) y vista de soporte a la derecha ($\sim$450~px) con la barra ordenada configurable de la Figura~\ref{fig:c4-q1} (tarea: ranking); (4)~panel de insights con tres números clave (Lima: 41.05\% de la población, 17.11\% de las asistencias, alcance 31.96/1\,000; Cusco: alcance \#1 y reclamos \#1 con ocupación 74.96\%, la más baja, luego no es saturación física; cuatro sedes en zona crítica de reclamos); (5)~pie metodológico con fuente, periodo y fórmulas de cada tasa. La jerarquía visual usa tamaño de fuente descendente título $>$ valor-KPI $>$ etiqueta; cada tarjeta agrupa valor, meta y estado en un solo bloque con espaciado uniforme (proximidad); las cuatro tarjetas comparten tipografía y fondo neutro (similitud), con el color de estado como único acento cromático variable, de modo que el ojo va directo a los dos rojos y un ámbar antes de leer cualquier número.
+
+\paragraph{Límite / trade-off.} Las metas de ``mediana de las 12 sedes'' son un benchmark interno declarado por este análisis, no una meta oficial del comité; se documentan como límite explícito en vez de inventarse un objetivo externo. Además, el agregado nacional de alcance (79.58) queda muy por debajo de la mediana no ponderada de sedes (116.67) precisamente porque está ponderado por la población de Lima, que es enorme y de bajo alcance: un mismo número (79.58) resume sedes con realidades muy distintas y puede ocultar, otra vez, el mismo problema de agregación que motivó esta auditoría.
+
+\bitacora{``Lima domina el festival; hay que reforzar Lima.'' (8 palabras)}{RESULTADO --- ocupación agregada nacional = \texttt{SUM(asistentes\_2025)} / \texttt{SUM(capacidad\_anual\_2025)} $\times$100, periodo 2025, segmento = 12 sedes, meta $\geq 85\%$ $\rightarrow$ valor real 83.89\%.}{Al normalizar por población (\texttt{alcance\_por\_1000\_hab}) y por asistencia (\texttt{reclamos\_por\_10000\_asistencias}), Cusco y Ayacucho emergen como focos de intensidad y fricción que el mapa de burbujas absolutas escondía detrás del tamaño de Lima.}{``Lima requiere volumen; Cusco y Ayacucho requieren calidad de experiencia.'' (10 palabras)}{El comité reasigna presupuesto: seguridad y logística escalan con volumen en Lima, mientras personal de atención y accesibilidad se refuerzan en Cusco, Ayacucho, Piura y Pucallpa según su tasa de reclamos, no según su tamaño.}

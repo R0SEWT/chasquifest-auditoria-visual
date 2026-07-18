@@ -1,0 +1,172 @@
+\section{Caso 2 --- El espagueti de los Andes y la lluvia todopoderosa}\label{sec:caso2}
+
+La base de este caso es \texttt{caso2\_logistica\_chasquifest.csv}, con granularidad de una fila por envío: $n=1\,728$ envíos entre 12 sedes (departamento/macrozona de destino), 18 semanas (\lstinline|semana_inicio| del 2026-03-02 al 2026-06-29), 3 transportistas (Apu Express, Río Rápido, Costa Norte), 3 tipos de vehículo (Van, Moto, Camión) y 3 macrozonas (Costa, Sierra, Selva). El gráfico original que se audita superpone \textbf{12 líneas de tasa de tardanza semanal, una por sede, en 12 colores, sobre un eje doble} (\% de tardanza a la izquierda, milímetros de lluvia a la derecha), coronadas por una línea roja de ``lluvia promedio'' rotulada explícitamente como \emph{prueba científica} de que la lluvia causa las demoras. Las cuatro preguntas siguientes auditan, en este orden, la selección de gráfico, la elección de vista según la tarea, el rediseño sin espagueti y, finalmente, la inferencia causal que el gráfico original da por probada.
+
+\subsection{Pregunta 1 --- Auditoría visual e inferencial del gráfico original}\label{ssec:c2-q1}
+
+El gráfico combina cuatro fallas distintas e independientes: una de selección de gráfico, una de codificación perceptual, una de accesibilidad y una inferencial. Se documentan por separado porque cada una exige una corrección distinta.
+
+\paragraph{(a) Falla de selección de gráfico --- la tarea equivocada.}
+
+\paragraph{Concepto técnico.} Superponer 12 series temporales continuas en un único plano cartesiano (\emph{spaghetti chart}) es un antipatrón de selección de gráfico: la tarea analítica real de la gerencia no es ``leer 12 tendencias que se cruzan simultáneamente'', sino \textbf{comparar la magnitud de tardanza entre sedes y detectar cuál se desvía de la meta} --- una tarea de comparación categórica, no de trazado continuo superpuesto \citep{cleveland1984graphical}.
+
+\paragraph{Evidencia.} 12 sedes $\times$ 18 semanas = 216 puntos sede-semana; con exactamente 8 envíos por sede-semana (mínimo = mediana = máximo = 8, verificado sobre las 216 celdas), cada tasa semanal solo puede tomar 8 valores discretos, en saltos de 12.5 puntos porcentuales (0\,\%, 12.5\,\%, 25\,\%, \ldots, 87.5\,\%). Con 12 líneas saltando en esos escalones y cruzándose de forma constante, es imposible discriminar visualmente a qué sede pertenece cada línea en los cruces.
+
+\paragraph{Decisión.} Reemplazar el gráfico por \textbf{pequeños múltiplos} (12 paneles, uno por sede, eje compartido) o por un esquema de \textbf{serie focal + 11 series de contexto en gris}, implementado en la Pregunta~3.
+
+\paragraph{Límite / trade-off.} Los pequeños múltiplos sacrifican la comparación punto a punto directa entre dos sedes arbitrarias --- exige memoria visual entre paneles --- lo que se mitiga ordenando los paneles por tasa agregada y compartiendo el eje Y.
+
+\paragraph{(b) Falla de codificación perceptual --- doce colores y doble eje.}
+
+\paragraph{Concepto técnico.} El canal de color categórico satura la capacidad de discriminación humana (aproximadamente 6--8 tonos distinguibles de forma simultánea); el doble eje Y (tardanza \% en un eje, lluvia mm en el otro) permite reescalar cada eje de forma arbitraria hasta que dos curvas \emph{parezcan} moverse juntas sin que exista relación real entre ellas --- el conocido \emph{dual-axis trick}, contrario a la jerarquía de canales perceptuales que sitúa la posición sobre una escala común por encima de cualquier ajuste de ejes independientes \citep{cleveland1984graphical}.
+
+\paragraph{Evidencia.} Se requieren 12 colores para 12 sedes, muy por encima del límite perceptual seguro; el eje de lluvia (rango observado de 0 a \textasciitilde 15\,mm, con medias entre 2.5 y 4.7\,mm según macrozona) puede reescalarse para que su curva ``toque'' visualmente la curva de tardanza (rango 0--100\,\%) aunque $\mathrm{corr}(\text{lluvia\_mm}, \text{minutos\_reales}) = 0.156$: la superposición visual no refleja la fuerza real, y débil, de la relación.
+
+\paragraph{Decisión.} Eliminar el doble eje; usar un único eje Y (0--100\,\% de tardanza) por panel; si se desea mostrar la lluvia, hacerlo en un canal separado (panel aparte, o barras tenues en la misma escala relativa 0--100\,\%, nunca con eje libre).
+
+\paragraph{Límite / trade-off.} Separar en paneles impide la lectura ``de un vistazo'' de ambas variables juntas; obliga a comparar por yuxtaposición (paneles alineados en X) en vez de superposición --- más honesto, pero exige más espacio y disciplina de alineación temporal.
+
+\paragraph{(c) Falla de accesibilidad --- color como único canal de identificación.}
+
+\paragraph{Concepto técnico.} Codificar 12 categorías solo por matiz (\emph{hue}) falla bajo daltonismo (deuteranopía/protanopía, presente en cerca del 8\,\% de los hombres) y en impresión o escala de grises, donde matices distintos pero de luminancia similar colapsan al mismo gris.
+
+\paragraph{Evidencia.} Con 12 sedes coloreadas, pares de tonos (por ejemplo, verdes de Selva frente a rojos de Sierra) se vuelven casi idénticos bajo simulación de daltonismo; en escala de grises, el rojo de ``lluvia'' y el color de ``tardanza'' --- pensados para leerse como polos opuestos --- pueden converger a grises de luminancia parecida, perdiéndose exactamente el contraste que el gráfico pretende comunicar.
+
+\paragraph{Decisión.} Usar \textbf{etiquetado directo} (texto) en vez de leyenda de color; reservar el color solo para una serie focal más el resto en gris neutro (redundancia de canal: posición + etiqueta directa, no solo color); validar con simulador de daltonismo antes de publicar.
+
+\paragraph{Límite / trade-off.} El etiquetado directo con 12 series simultáneas sigue compitiendo por espacio si se muestran todas a la vez; solo escala bien cuando se reduce a foco + contexto (una serie resaltada frente a 11 de fondo), como se implementa en la Pregunta~3.
+
+\paragraph{(d) Falla inferencial --- causalidad desde asociación observacional.}
+
+\paragraph{Concepto técnico.} Yuxtaponer una serie de ``lluvia promedio'' con la tasa de tardanza y rotularla \emph{prueba científica} es una falacia de correlación a causalidad, reforzada visualmente por el doble eje alineado. Una asociación observacional --- incluso si fuera fuerte --- no aísla una causa sin control de confusores ni diseño experimental o cuasi-experimental \citep{anscombe1973graphs}.
+
+\paragraph{Evidencia.} $\mathrm{corr}(\text{lluvia\_mm}, \text{minutos\_reales}) = 0.156$ ($R^2 \approx 2.4$\,\%, débil) frente a $\mathrm{corr}(\text{distancia\_km}, \text{minutos\_reales}) = 0.922$ ($R^2 \approx 84.9$\,\%, fuerte); y \lstinline|distancia_km| y \lstinline|lluvia_mm| son prácticamente independientes entre sí ($\mathrm{corr}=0.001$), por lo que la distancia \emph{no} es la vía indirecta por la que la lluvia ``parecería'' actuar sobre los minutos crudos. La distancia explica cerca de 35 veces más varianza de \lstinline|minutos_reales| que la lluvia (Figura~\ref{fig:c2-q1}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso2_q1_r2.pdf}
+\caption{$R^2$ de dos asociaciones sobre \texttt{minutos\_reales}: distancia (84.9\,\%, fuerte) frente a lluvia (2.4\,\%, débil). La comparación desmonta la etiqueta de ``prueba científica'' del gráfico original.}
+\label{fig:c2-q1}
+\end{figure}
+
+\paragraph{Decisión.} Retirar la etiqueta ``prueba científica''; reportar $\mathrm{corr}(\text{lluvia}, \text{minutos\_reales})$ junto a $\mathrm{corr}(\text{distancia}, \text{minutos\_reales})$ en el mismo texto para dar contexto de magnitud relativa; usar lenguaje de asociación (``se observa una diferencia promedio de $X$ minutos\ldots'') en vez de causal.
+
+\paragraph{Límite / trade-off (matiz honesto).} Aunque el $R^2$ de la lluvia sobre los minutos crudos es bajo, al mirar el incumplimiento binario de SLA (\lstinline|tardanza_flag|) la brecha es mayor: 32.7\,\% = 411/1\,256 envíos sin lluvia frente a 76.5\,\% = 361/472 envíos con lluvia, y esa brecha persiste dentro de cada tercil de distancia (aproximadamente 32--34\,\% sin lluvia frente a 72--81\,\% con lluvia en distancia corta, media y larga; desarrollo completo en la Pregunta~4). Es decir: la lluvia no es irrelevante para el incumplimiento de SLA, pero sigue sin poder llamarse ``causa'' sin controlar transportista, vehículo y factores no medidos (tráfico, hora del día, prioridad de envío).
+
+\subsection{Pregunta 2 --- La pregunta dicta el gráfico}\label{ssec:c2-q2}
+
+\paragraph{Vista 1 --- comparar mediana y dispersión de \texttt{minutos\_reales} entre transportistas, dentro de cada macrozona.}
+
+\paragraph{Concepto técnico.} La tarea analítica declarada es \emph{comparar distribuciones} --- no un solo promedio puntual --- entre 3 grupos (transportista) anidados en 3 facetas (macrozona). La marca correspondiente es el \textbf{boxplot} (posición = mediana y cuartiles; longitud de la caja = rango intercuartílico), el estándar para mostrar tendencia central y dispersión de forma simultánea.
+
+\paragraph{Evidencia.} Las medianas por transportista $\times$ macrozona van de 166.1\,min (Apu Express--Sierra, $n=280$) a 197.8\,min (Costa Norte--Sierra, $n=250$); el rango intercuartílico (dispersión) va de \textasciitilde 97\,min (Apu Express--Selva) a \textasciitilde 140\,min (Costa Norte--Sierra); el tamaño de cada celda varía de $n=121$ (Río Rápido--Selva) a $n=280$ (Apu Express--Sierra). Ver Figura~\ref{fig:c2-q2-box}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{caso2_q2_box.pdf}
+\caption{Distribución de \texttt{minutos\_reales} por transportista, faceteada por macrozona, con eje Y compartido en los tres paneles. La posición de la mediana y la altura de la caja son el canal más preciso para comparar tendencia central y dispersión.}
+\label{fig:c2-q2-box}
+\end{figure}
+
+\paragraph{Decisión.} Eje Y = \lstinline|minutos_reales| (posición, el canal más preciso de la jerarquía posición $>$ longitud $>$ ángulo $>$ área $>$ color); eje X = transportista; facet por macrozona con eje Y compartido (mismo rango en los tres paneles) para permitir comparación directa entre paneles; color de la caja = transportista, redundante con la posición en X (no es el único canal de identificación); mediana marcada con línea gruesa; outliers mostrados como puntos, no eliminados.
+
+\paragraph{Límite / trade-off.} El boxplot esconde la forma exacta de la distribución (por ejemplo, bimodalidad) y minimiza la lectura de $n$ si no se anota explícitamente; aquí $n$ varía de 121 a 280 por celda, anotado en las etiquetas del eje X para no sobre-interpretar cajas con pocos datos.
+
+\paragraph{Vista 2 --- relación entre \texttt{distancia\_km} y \texttt{minutos\_reales}.}
+
+\paragraph{Concepto técnico.} La tarea analítica declarada es \emph{evaluar la fuerza y la forma de una relación entre dos variables cuantitativas continuas}. La marca correspondiente es el \textbf{scatter plot} (posición X-Y, el canal más preciso posible para dos cuantitativas), muy superior a intentar comprimir esta relación en líneas o doble eje como en el gráfico original.
+
+\paragraph{Evidencia.} $\mathrm{corr}=0.922$, $R^2=84.9$\,\%; recta OLS con $p\approx 0$ y $n=1\,728$:
+\[
+\widehat{\text{minutos\_reales}} = 1.43 \cdot \text{distancia\_km} + 60.1 .
+\]
+El tratamiento de valores atípicos con la regla $1.5\times$IQR marca 62 outliers en \lstinline|minutos_reales| ($>444.1$\,min, 3.6\,\%) y 49 outliers en \lstinline|distancia_km| ($>260.8$\,km, 2.8\,\%). Ver Figura~\ref{fig:c2-q2-scatter}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{caso2_q2_scatter.pdf}
+\caption{Distancia frente a minutos reales (n = 1\,728), con recta OLS y outliers ($>1.5\cdot$IQR) resaltados en vez de eliminados.}
+\label{fig:c2-q2-scatter}
+\end{figure}
+
+\paragraph{Decisión.} Transparencia (alpha = 0.25) para mitigar el sobre-trazado (\emph{overplotting}) de 1\,728 puntos; línea de tendencia OLS anotada con su ecuación y $R^2$; los outliers no se eliminan --- se resaltan con marcador y color distintos porque representan casos reales de negocio (por ejemplo, camiones a distancias largas en Selva) que la gerencia necesita ver, no ocultar.
+
+\paragraph{Límite / trade-off.} La recta OLS asume una relación lineal y homocedástica; a distancias muy largas la dispersión podría crecer (heterocedasticidad), por lo que antes de usar esta recta para pronóstico habría que revisar residuales por tramo de distancia. Además, eliminar outliers ``para limpiar el gráfico'' sin justificación operativa ocultaría exactamente los envíos que más le cuestan a la operación.
+
+\paragraph{Elección de KPI principal: tasa de tardanza vs.\ SLA, con P90 como \emph{guardrail}.}
+
+\paragraph{Concepto técnico.} Un KPI operacional debe ser accionable frente a una meta, no solo descriptivo de una distribución.
+
+\paragraph{Evidencia.} Periodo: 18 semanas, \lstinline|semana_inicio| del 2026-03-02 al 2026-06-29. Tasa de tardanza agregada = 772/1\,728 = 44.68\,\% frente a una meta de 20\,\% (más del doble). El P90 por transportista (Apu Express 312.8\,min, Costa Norte 354.2\,min, Río Rápido 349.9\,min) muestra la cola; la media (193.8 / 212.8 / 212.3\,min) está sesgada por outliers y por la mezcla de distancias; la mediana (175.3 / 187.4 / 187.3\,min) es robusta pero esconde justamente esa cola.
+
+\paragraph{Decisión.} Se recomienda la \textbf{tasa de tardanza vs.\ SLA} ($\text{SUM}(\text{tardanza\_flag})/\text{COUNT}(\text{envio\_id})$) como KPI decisor primario --- es binario, está directamente ligado a la meta operativa del 20\,\% y admite una línea de referencia clara (Pregunta~4) --- usando \textbf{P90} como \emph{guardrail} de cola, con un umbral propuesto de meta P90 $\le 300$\,min (los tres transportistas ya lo superan: 312.8--354.2\,min), para detectar si el 10\,\% peor de envíos se dispara aunque la mediana luzca aceptable.
+
+\begin{lstlisting}[style=cod]
+Mediana por celda (Tableau):     { FIXED [Macrozona],[Transportista] : MEDIAN([Minutos Reales]) }
+Mediana por celda (pandas):      df.groupby(['macrozona','transportista'])['minutos_reales'].median()
+
+P90 por transportista (Tableau): { FIXED [Transportista] : PERCENTILE([Minutos Reales], 0.9) }
+P90 por transportista (pandas):  df.groupby('transportista')['minutos_reales'].quantile(0.9)
+
+Tasa de tardanza (Tableau):      SUM([Tardanza_flag]) / COUNT([Envio_id])   -- con [Transportista] en Filas
+Tasa de tardanza (pandas):       df.groupby('transportista')['tardanza_flag'].agg(['sum','count'])
+\end{lstlisting}
+
+\paragraph{Límite / trade-off.} La media es sensible a outliers y a cambios en el mix de rutas (una semana con más envíos largos la mueve sin que cambie el desempeño real por ruta); la mediana esconde la cola (el P90 puede duplicarse sin que la mediana se mueva); la tasa de tardanza sola no dice \emph{cuánto} tarde llega un envío, por lo que se complementa con el P90; ninguno de los cuatro estadísticos controla por transportista o macrozona por sí solo --- deben reportarse siempre segmentados, no solo en agregado.
+
+\subsection{Pregunta 3 --- Doce series sin espagueti}\label{ssec:c2-q3}
+
+Tarea analítica declarada: seguir la evolución semanal de la tasa de tardanza por sede para detectar cuáles sedes están sistemáticamente por encima de la meta, sin perder la capacidad de comparar magnitudes entre sedes.
+
+\paragraph{Concepto técnico.} Con 12 series de solo 18 puntos cada una y ruido alto (ver evidencia), superponerlas en un único plano es un antipatrón de selección de gráfico. La solución es \textbf{pequeños múltiplos} (facet por sede) combinados con \textbf{foco + contexto} (la sede de cada panel resaltada en color, las otras 11 dibujadas en gris de fondo como referencia): así se preserva tanto la comparación ``dentro de panel vs.\ meta'' como la comparación ``entre sedes'' sin espagueti ni leyenda de 12 colores.
+
+\paragraph{Evidencia.} 12 sedes $\times$ 18 semanas = 216 celdas sede-semana, cada una con exactamente 8 envíos (mínimo = mediana = máximo = 8), por lo que la tasa semanal de una sede solo puede tomar valores en incrementos de 12.5 puntos porcentuales (0\,\%, 12.5\,\%, \ldots, 87.5\,\%): un solo envío que cruza el umbral mueve la tasa 12.5\,pp de golpe. Con 8 envíos por sede-semana $\times$ 18 semanas = 144 envíos por sede, la sede con peor tasa agregada es SED-01 (Lima, Costa) con 61.1\,\% = 88/144; la mejor es SED-04 (Chiclayo, Costa) con 28.5\,\% = 41/144 (Figura~\ref{fig:c2-q3}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{caso2_q3_multiplos.pdf}
+\caption{Tasa de tardanza semanal por sede, 12 pequeños múltiplos con escala común 0--100\,\% y línea de meta al 20\,\%. Cada panel resalta su propia sede (SED-01, la peor, en rojo) sobre las otras 11 en gris de contexto; orden de peor a mejor por tasa agregada.}
+\label{fig:c2-q3}
+\end{figure}
+
+\paragraph{Decisión.} Escala compartida de 0 a 100\,\% en los 12 paneles (nunca autoescalada), condición no negociable para que la altura de cada línea sea comparable entre paneles. Etiquetado directo: el nombre de la sede y su tasa agregada se imprimen como título del panel (texto), sin leyenda de color para 12 series. El significado no depende del matiz sino de la posición de la línea coloreada respecto a la línea de referencia (meta 20\,\%, punteada) y de la etiqueta de texto directa; en escala de grises, la línea focal (más gruesa, con marcadores) sigue siendo distinguible del fondo gris tenue por grosor y opacidad, no solo por color. La línea de referencia de meta (20\,\%) se repite en cada panel para un juicio inmediato de ``por encima / por debajo''. El \emph{table calc} que ordena los paneles se declara explícitamente: $\mathrm{RANK}(\mathrm{SUM}(\text{tardanza\_flag})/\mathrm{COUNT}(\text{envio\_id}))$ con \textbf{partición = ninguna} (toda la tabla es una sola partición) y \textbf{addressing = sede\_id} (recorre las 12 sedes, sin reinicio).
+
+\paragraph{Límite / trade-off.} Si cada panel usara su propio eje Y ajustado al rango local de esa sede, una sede de bajo desempeño real (por ejemplo, SED-04, 28.5\,\% agregado, con variación semana a semana pequeña en términos absolutos) podría verse tan ``dramática'' en su panel como SED-01 (61.1\,\%), porque el eje se estira para llenar el espacio del panel: es una ilusión creada por el diseño (autoescalado), no por la magnitud real de los datos --- motivo exacto por el que se fija la escala compartida 0--100\,\%. Además, con 8 envíos por semana, un solo pico aislado no debe leerse como tendencia: se recomienda no interpretar un salto de 12.5\,pp sin mirar al menos 3--4 semanas consecutivas o el agregado del panel.
+
+\subsection{Pregunta 4 --- Declarar no es inferir}\label{ssec:c2-q4}
+
+\paragraph{KPI decisor: tasa de tardanza agregada vs.\ meta.}
+
+\paragraph{Concepto técnico.} Una línea de referencia de meta convierte una tasa descriptiva en un juicio operativo binario (¿cruza o no cruza la meta?); no es un promedio ilustrativo, es un umbral de decisión.
+
+\paragraph{Evidencia.} $\text{num}$ (envíos con \lstinline|tardanza_flag|=1) = 772; $\text{den}$ (envíos totales) = 1\,728; tasa de tardanza agregada = 772/1\,728 = 44.68\,\%. Periodo: 18 semanas, \lstinline|semana_inicio| del 2026-03-02 al 2026-06-29. Segmento: agregado, todas las sedes y transportistas. Meta operativa declarada: 20\,\%. El KPI está 24.68 puntos porcentuales por encima de la meta (2.23$\times$ la meta). Como verificación de robustez del campo fuente: la regla operativa \lstinline|tardanza_flag| = 1 si \lstinline|minutos_reales| $\ge 1.12\times$\lstinline|minutos_objetivo| reproduce el campo \lstinline|tardanza_flag| en 1\,727 de 1\,728 filas (99.94\,\%); el único caso discrepante (ratio = 1.119962, a 0.038\,pp del corte) es redondeo de piso, no una regla distinta, por lo que \lstinline|tardanza_flag| se trata como campo autoritativo para todo cálculo de tasas.
+
+\paragraph{Decisión.} Dibujar una línea de referencia horizontal en 20\,\% sobre la serie o barra de tasa de tardanza (Figura~\ref{fig:c2-q1} sirve de referencia de estilo; ver también Figura~\ref{fig:c2-q3} para la meta por sede) y reportar siempre $\text{num}/\text{den}$ junto al porcentaje, nunca el porcentaje solo. Fórmula Tableau: \texttt{SUM([Tardanza\_flag]) / COUNT([Envio\_id])}, con línea de referencia constante en 0.20 (campo calculado \texttt{Meta = 0.20} o parámetro). Pandas: \texttt{df['tardanza\_flag'].sum() / len(df)}.
+
+\paragraph{Límite / trade-off.} La tasa agregada mezcla transportistas muy distintos (Apu Express 32.4\,\% = 211/651 frente a Río Rápido 57.2\,\% = 269/470, con Costa Norte en 48.1\,\%) y sedes muy distintas (SED-04 28.5\,\% = 41/144 frente a SED-01 61.1\,\% = 88/144): cruzar la meta en agregado no dice \emph{dónde} actuar; siempre debe acompañarse de la vista segmentada (Preguntas~2 y~3) antes de tomar una decisión de asignación.
+
+\paragraph{Trend line lluvia--demora: una pregunta distinta, no causal.}
+
+\paragraph{Concepto técnico.} Una recta de tendencia (OLS) entre \lstinline|lluvia_mm| y \lstinline|minutos_reales| responde a la pregunta ``¿cuál es la mejor recta lineal que resume cómo covarían estas dos variables en los datos observados?'' --- una pregunta descriptiva y asociativa (¿cuánto se mueve $Y$ en promedio por unidad de $X$, en esta muestra?), \textbf{no} la pregunta causal ``¿si yo pudiera cambiar la lluvia manteniendo todo lo demás fijo, cambiaría el tiempo de entrega?''. Esta segunda pregunta requiere un diseño que aísle la lluvia de sus covariables (experimento o cuasi-experimento), algo que un CSV observacional de un solo periodo no ofrece \citep{anscombe1973graphs}.
+
+\paragraph{Evidencia.} OLS lluvia $\to$ minutos reales ($r=0.156$, $R^2=2.4$\,\%, $p=6.8\times 10^{-11}$):
+\[
+\widehat{\text{minutos\_reales}} = 2.01 \cdot \text{lluvia\_mm} + 198.2 ,
+\]
+significativo pero de efecto pequeño sobre los minutos crudos. Sin embargo, sobre \lstinline|tardanza_flag| la asociación sin controlar es mayor: 32.7\,\% = 411/1\,256 (sin lluvia) frente a 76.5\,\% = 361/472 (con lluvia), y esa brecha de 38 a 48 puntos porcentuales persiste dentro de cada tercil de distancia --- corta (37.8\,pp), media (45.9\,pp) y larga (47.9\,pp). Transportista y vehículo están balanceados entre los grupos con y sin lluvia (proporciones casi idénticas por transportista y por vehículo entre \lstinline|lluvia_flag|=0 y =1), por lo que no son confusores fuertes de la exposición; la macrozona sí varía en incidencia de lluvia (Selva 41.7\,\% = 180/432 frente a Costa 16.5\,\% = 95/576) pero su tasa de tardanza propia es casi plana (Costa 45.7\,\%, Sierra 44.4\,\%, Selva 43.8\,\%), por lo que tampoco explica la brecha por sí sola.
+
+\paragraph{Decisión.} Antes de confiar en la trend line se revisarían dos supuestos: primero, \textbf{linealidad} --- ¿el efecto de la lluvia es realmente lineal en mm, o hay un umbral (``llueve o no llueve'' importa más que los mm exactos)? El salto grande en \lstinline|tardanza_flag| frente al $R^2$ bajo en minutos crudos sugiere un efecto de umbral sobre el \emph{ratio} minutos\_reales/objetivo ($\mathrm{corr}(\text{lluvia\_mm}, \text{ratio}) = 0.489$, muy superior a $\mathrm{corr}(\text{lluvia\_mm}, \text{minutos\_reales}) = 0.156$), no una recta continua. Segundo, \textbf{confusores}: distancia ($r=0.922$ con el resultado, pero $r=0.001$ con lluvia, por lo que no es confusor clásico de la relación lluvia-minutos, aunque sí domina la varianza total); transportista y vehículo (balanceados, verificado arriba); macrozona (asociada a la exposición, pero con tasa de tardanza propia casi plana); y factores no medidos (tráfico, hora del día, prioridad de envío, día de semana) que podrían covariar con la lluvia y explicar parte de la brecha.
+
+\paragraph{Límite / trade-off.} Ni una pendiente ni un buen $R^2$ demuestran causalidad: los datos son observacionales --- nadie asignó aleatoriamente qué envíos ``reciben'' lluvia --- y un $R^2$ alto solo certifica buen ajuste dentro de la muestra, no aislamiento de la causa. Aquí, además, el $R^2$ de la lluvia sobre los minutos crudos es bajo (2.4\,\%) precisamente porque la distancia domina la varianza (84.9\,\%); mezclar ambas señales en un gráfico de doble eje, como hacía el original, es lo que producía la ilusión de ``prueba científica''.
+
+\bitacora{
+``La lluvia parece causar toda la tardanza; el gráfico de 12 líneas lo prueba.''
+}{
+Tasa de tardanza vs.\ SLA --- Tableau \texttt{SUM([Tardanza\_flag])/COUNT([Envio\_id])}, pandas \texttt{df['tardanza\_flag'].sum()/len(df)} --- periodo 2026-03-02 a 2026-06-29 (18 semanas) --- segmento agregado y por transportista/sede --- meta 20\,\%.
+}{
+Al descomponer por distancia y transportista, la distancia explica el 84.9\,\% de la varianza de \texttt{minutos\_reales} ($r=0.922$) frente al 2.4\,\% de la lluvia ($r=0.156$); Río Rápido (57.2\,\% = 269/470 tardíos) casi duplica a Apu Express (32.4\,\% = 211/651): el problema es mayormente operativo (ruteo/transportista), no meteorológico, aunque la lluvia sigue asociada al incumplimiento de SLA dentro de cada tercil de distancia.
+}{
+``Distancia y transportista se asocian con la tardanza; la lluvia es secundaria pero no nula.''
+}{
+La decisión que cambia es priorizar la renegociación de rutas y SLA con Río Rápido y Costa Norte, y revisar la asignación en distancias largas, en vez de invertir primero en ``gestión de lluvia''. El dato que refutaría esta lectura revisada sería una regresión múltiple (\texttt{lluvia\_flag} + \texttt{distancia\_km} + transportista + vehículo + macrozona + semana) donde el coeficiente de \texttt{lluvia\_flag} deje de ser significativo tras controlar todo lo demás, o, mejor aún, un experimento o cuasi-experimento que compare la misma ruta, transportista y vehículo en semanas con y sin lluvia y muestre que la tardanza no cambia; si en cambio el coeficiente de lluvia se mantiene significativo y de magnitud relevante tras esos controles, habría que reincorporar la lluvia como factor operativo real --- no como ``prueba científica'' única, sino como covariable relevante junto a distancia y transportista.
+}

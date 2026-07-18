@@ -14,4 +14,17 @@ __pycache__/
 .DS_Store
 *.bak-*
 
+# LaTeX build artifacts (informe/)
+*.aux
+*.log
+*.toc
+*.out
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
 # NOTE: data/*.csv ARE committed on purpose (synthetic exam data).
+*.bcf
+*.run.xml
