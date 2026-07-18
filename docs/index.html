@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operación ChasquiFest — Auditoría visual</title>
+<meta name="description" content="Cinco gráficos que mintieron y lo que los datos realmente dicen. Auditoría de visualización sobre datos sintéticos del festival ficticio ChasquiFest.">
+<style>
+  :root{
+    color-scheme: light;
+    --plane:#f9f9f7; --surface:#fcfcfb;
+    --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+    --grid:#e1e0d9; --axis:#c3c2b7; --ring:rgba(11,11,11,.10);
+    --s1:#2a78d6; --s2:#008300; --s3:#e87ba4;
+    --good:#0ca30c; --good-ink:#006300; --critical:#d03b3b;
+    --track:#ecebe6;
+    --accent:#4a3aa7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:where(:not([data-theme="light"])){
+      color-scheme: dark;
+      --plane:#0d0d0d; --surface:#1a1a19;
+      --ink:#fff; --ink2:#c3c2b7; --muted:#898781;
+      --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,.10);
+      --s1:#3987e5; --s2:#008300; --s3:#d55181;
+      --good:#0ca30c; --good-ink:#0ca30c; --critical:#d03b3b;
+      --track:#2c2c2a; --accent:#9085e9;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --plane:#0d0d0d; --surface:#1a1a19;
+    --ink:#fff; --ink2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,.10);
+    --s1:#3987e5; --s2:#008300; --s3:#d55181;
+    --good:#0ca30c; --good-ink:#0ca30c; --critical:#d03b3b;
+    --track:#2c2c2a; --accent:#9085e9;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--plane); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    line-height:1.55; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:0 20px}
+  a{color:var(--s1); text-underline-offset:2px}
+
+  /* Header */
+  header.top{padding:56px 0 8px}
+  .eyebrow{font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  h1{font-size:clamp(1.9rem,5vw,3rem); line-height:1.08; margin:.35em 0 .3em; letter-spacing:-.02em}
+  h1 .em{color:var(--accent)}
+  .lede{font-size:1.15rem; color:var(--ink2); max-width:46ch; margin:.2em 0 1.4em}
+  .method{font-size:.92rem; color:var(--ink2); background:var(--surface); border:1px solid var(--ring);
+    border-radius:12px; padding:14px 16px; max-width:62ch}
+  .method b{color:var(--ink)}
+  .toolbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:18px 0 8px}
+  .btn{font:inherit; font-size:.86rem; font-weight:600; color:var(--ink2); background:var(--surface);
+    border:1px solid var(--ring); border-radius:999px; padding:7px 14px; cursor:pointer; text-decoration:none}
+  .btn:hover{border-color:var(--axis)}
+  #themeBtn{margin-left:auto}
+
+  /* Case cards */
+  main{padding:26px 0 10px}
+  .case{background:var(--surface); border:1px solid var(--ring); border-radius:16px;
+    padding:26px 26px 24px; margin:22px 0; overflow:hidden}
+  .case-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:14px}
+  .case-num{font-size:.82rem; font-weight:700; letter-spacing:.1em; color:var(--accent); text-transform:uppercase}
+  .case-name{font-size:1.32rem; font-weight:650; letter-spacing:-.01em}
+  .verdicts{display:grid; grid-template-columns:1fr; gap:10px; margin:6px 0 20px}
+  @media(min-width:640px){.verdicts{grid-template-columns:1fr 1fr}}
+  .v{padding:12px 14px; border-radius:11px; border:1px solid var(--ring)}
+  .v .tag{font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; display:flex; align-items:center; gap:6px}
+  .v.lie{background:color-mix(in srgb,var(--critical) 7%,var(--surface))}
+  .v.lie .tag{color:var(--critical)}
+  .v.truth{background:color-mix(in srgb,var(--good) 8%,var(--surface))}
+  .v.truth .tag{color:var(--good-ink)}
+  .v p{margin:.4em 0 0; font-size:.98rem}
+  .v.lie p{color:var(--ink2)}
+  .lie .headline{text-decoration:line-through; text-decoration-color:var(--critical); text-decoration-thickness:2px}
+
+  /* Stat tiles */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:1px;
+    background:var(--ring); border:1px solid var(--ring); border-radius:12px; overflow:hidden; margin:4px 0 22px}
+  .stat{background:var(--surface); padding:13px 15px}
+  .stat .num{font-size:1.5rem; font-weight:680; letter-spacing:-.02em; line-height:1.1}
+  .stat .num.g{color:var(--good-ink)} .stat .num.r{color:var(--critical)}
+  .stat .lab{font-size:.78rem; color:var(--muted); margin-top:2px}
+
+  /* Charts (CSS bars) */
+  .chart{margin:8px 0 6px}
+  .chart .ct{font-size:.9rem; font-weight:600; color:var(--ink2); margin-bottom:2px}
+  .chart .task{font-size:.76rem; color:var(--muted); margin-bottom:12px}
+  .row{display:grid; grid-template-columns:112px 1fr; align-items:center; gap:12px; margin:9px 0}
+  .row .rl{font-size:.82rem; color:var(--ink2); text-align:right; font-variant-numeric:tabular-nums}
+  .track{position:relative; height:26px; background:var(--track); border-radius:6px}
+  .fill{position:absolute; top:0; bottom:0; left:0; border-radius:4px 6px 6px 4px; display:flex; align-items:center;
+    justify-content:flex-end; padding-right:8px; color:#fff; font-size:.8rem; font-weight:650; min-width:34px;
+    font-variant-numeric:tabular-nums}
+  .fill.s1{background:var(--s1)} .fill.s2{background:var(--s2)} .fill.s3{background:var(--s3)}
+  .fill.mut{background:var(--axis); color:var(--ink)}
+  .fill.good{background:var(--good)} .fill.crit{background:var(--critical)}
+  .fill .in{position:sticky}
+  /* part-to-whole stacked */
+  .stack{display:flex; height:30px; border-radius:6px; overflow:hidden; gap:2px; background:var(--surface)}
+  .seg{display:flex; align-items:center; justify-content:center; color:#fff; font-size:.8rem; font-weight:650; min-width:0}
+  .stack-lab{font-size:.8rem; color:var(--ink2); margin:10px 0 2px; font-weight:600}
+  /* diverging */
+  .div{position:relative; margin:14px 0}
+  .zero{position:absolute; left:50%; top:-4px; bottom:-4px; width:2px; background:var(--axis)}
+  .dr{display:grid; grid-template-columns:1fr 1fr; align-items:center; height:34px; margin:8px 0}
+  .dbar{height:26px; display:flex; align-items:center; border-radius:6px; font-size:.82rem; font-weight:650; color:#fff; padding:0 9px; font-variant-numeric:tabular-nums}
+  .dbar.neg{justify-self:end; justify-content:flex-start; background:var(--critical); border-radius:6px 4px 4px 6px}
+  .dbar.pos{justify-self:start; justify-content:flex-end; background:var(--good); border-radius:4px 6px 6px 4px}
+  .dl{font-size:.8rem; color:var(--ink2); margin-bottom:4px}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:.8rem; color:var(--ink2); margin:12px 0 2px}
+  .legend span{display:inline-flex; align-items:center; gap:6px}
+  .dot{width:11px; height:11px; border-radius:3px; display:inline-block}
+
+  .twist{font-size:.95rem; color:var(--ink2); margin:20px 0 0; padding:13px 15px; border-left:3px solid var(--accent);
+    background:color-mix(in srgb,var(--accent) 5%,var(--surface)); border-radius:0 10px 10px 0}
+  .twist b{color:var(--ink)}
+
+  /* penalty ribbon */
+  .pen{font-size:.78rem; color:var(--muted); margin-top:14px}
+  .pen code{background:var(--track); padding:1px 6px; border-radius:5px; color:var(--ink2); font-size:.92em}
+
+  footer{border-top:1px solid var(--ring); margin-top:40px; padding:30px 0 60px; color:var(--ink2); font-size:.9rem}
+  footer h3{font-size:1rem; margin:0 0 10px; color:var(--ink)}
+  footer ul{margin:0 0 18px; padding-left:18px} footer li{margin:4px 0}
+  .disc{font-size:.82rem; color:var(--muted); border:1px dashed var(--ring); border-radius:10px; padding:12px 14px; margin-top:16px}
+  @media(max-width:520px){
+    .row{grid-template-columns:84px 1fr; gap:8px}
+    .case{padding:20px 16px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">Operación ChasquiFest · Auditoría de visualización</div>
+  <h1>Cinco gráficos <span class="em">mintieron</span>.<br>Esto es lo que dicen los datos.</h1>
+  <p class="lede">El dashboard del festival mezclaba porcentajes, escalas y ventanas temporales con entusiasmo. Cada tarjeta contrasta el <b>titular</b> que gritaba el gráfico original con la <b>realidad</b> recalculada desde el CSV.</p>
+  <div class="method">
+    <b>Cómo leer esto:</b> cada afirmación numérica está recalculada y validada contra los datos en los notebooks del examen (uno por caso). Las tasas declaran numerador y denominador; ninguna asociación se presenta como causa. Datos <b>sintéticos y ficticios</b>.
+  </div>
+  <div class="toolbar">
+    <a class="btn" href="https://github.com/R0SEWT/chasquifest-auditoria-visual" id="repoLink">Código &amp; notebooks ↗</a>
+    <a class="btn" href="https://github.com/R0SEWT/chasquifest-auditoria-visual/blob/main/respuestas.md">Respuestas completas ↗</a>
+    <button class="btn" id="themeBtn" type="button" aria-label="Cambiar tema">◐ Tema</button>
+  </div>
+</header>
+
+<main>
+
+<!-- CASO 1 -->
+<section class="case">
+  <div class="case-head"><span class="case-num">Caso 1</span><span class="case-name">La torta porcentual que nadie pidió</span></div>
+  <div class="verdicts">
+    <div class="v lie"><div class="tag">✗ El titular</div><p class="headline">"App produce casi la mitad del éxito: 35.7%"</p></div>
+    <div class="v truth"><div class="tag">✓ La realidad</div><p>El 35.7% es una <b>suma de porcentajes por fila</b> — no representa ningún total. El share <b>real</b> de ventas de App es <b>53.7%</b>.</p></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num">90.27%</div><div class="lab">Ocupación global ponderada<br>(SUM ingresos / SUM cupos)</div></div>
+    <div class="stat"><div class="num">88.17%</div><div class="lab">"Promedio de promedios"<br>AVG(ocupacion_fila) — sesga</div></div>
+    <div class="stat"><div class="num">S/74.65</div><div class="lab">Ticket = ventas / órdenes</div></div>
+    <div class="stat"><div class="num">59.2%</div><div class="lab">Mayor margen: Taquilla<br>(el menor volumen)</div></div>
+  </div>
+  <div class="chart">
+    <div class="ct">La torta (suma de %) vs. el share real de ventas por canal</div>
+    <div class="task">Tarea: parte-todo — ¿qué fracción del total aporta cada canal?</div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--s1)"></i>App</span>
+      <span><i class="dot" style="background:var(--s2)"></i>Web</span>
+      <span><i class="dot" style="background:var(--s3)"></i>Taquilla</span>
+    </div>
+    <div class="stack-lab">Torta de porcentajes (denominador sin sentido)</div>
+    <div class="stack">
+      <div class="seg" style="width:35.7%;background:var(--s1)"><span>App 35.7%</span></div>
+      <div class="seg" style="width:33.8%;background:var(--s2)"><span>Web 33.8%</span></div>
+      <div class="seg" style="width:30.5%;background:var(--s3);color:#3a1020"><span>Taq. 30.5%</span></div>
+    </div>
+    <div class="stack-lab">Ventas reales — SUM(ventas_soles) por canal / total</div>
+    <div class="stack">
+      <div class="seg" style="width:53.7%;background:var(--s1)"><span>App 53.7%</span></div>
+      <div class="seg" style="width:29.3%;background:var(--s2)"><span>Web 29.3%</span></div>
+      <div class="seg" style="width:17.0%;background:var(--s3);color:#3a1020"><span>Taq. 17%</span></div>
+    </div>
+  </div>
+  <p class="twist"><b>El giro:</b> los ratios por fila no son aditivos. Sumar <code>ocupacion_fila_pct</code> inventa un denominador que no existe; la decisión de capacidad se toma con la ocupación ponderada (90.27% &gt; meta 88%), y el aporte por canal con el share de ventas.</p>
+  <p class="pen">Trampas evitadas: <code>% con num/den</code> · <code>gráfico con su tarea</code></p>
+</section>
+
+<!-- CASO 2 -->
+<section class="case">
+  <div class="case-head"><span class="case-num">Caso 2</span><span class="case-name">El espagueti de los Andes y la lluvia todopoderosa</span></div>
+  <div class="verdicts">
+    <div class="v lie"><div class="tag">✗ El titular</div><p class="headline">"DEMOSTRADO: la lluvia causa todas las demoras"</p></div>
+    <div class="v truth"><div class="tag">✓ La realidad</div><p>La <b>distancia</b> explica el 85% de la variación en duración; la lluvia, el 2.4%. Es asociación, no causa — y el driver es otro.</p></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num r">44.68%</div><div class="lab">Tardanza agregada = 772/1728 envíos (meta 20%)</div></div>
+    <div class="stat"><div class="num">0.92</div><div class="lab">correlación distancia ↔ minutos</div></div>
+    <div class="stat"><div class="num">0.16</div><div class="lab">correlación lluvia ↔ minutos</div></div>
+    <div class="stat"><div class="num r">57.2%</div><div class="lab">Peor transportista: Río Rápido<br>(269/470)</div></div>
+  </div>
+  <div class="chart">
+    <div class="ct">¿Cuánto de la variación en duración explica cada factor? (R²)</div>
+    <div class="task">Tarea: comparar la magnitud de dos asociaciones</div>
+    <div class="row"><div class="rl">Distancia</div><div class="track"><div class="fill s1" style="width:85%"><span class="in">85.0%</span></div></div></div>
+    <div class="row"><div class="rl">Lluvia</div><div class="track"><div class="fill mut" style="width:2.4%"></div></div></div>
+    <div class="row"><div class="rl" style="visibility:hidden">.</div><div style="font-size:.78rem;color:var(--muted);margin-top:-6px">La barra de lluvia (2.4%) es casi invisible — ese es el punto.</div></div>
+  </div>
+  <p class="twist"><b>El giro:</b> una línea roja de "lluvia promedio" sobre 12 series superpuestas insinúa causa. Pero distancia y lluvia son independientes (r≈0), y controlar por distancia deja a la lluvia sin poder explicativo. Ni una pendiente ni un buen R² demuestran causalidad en datos observacionales.</p>
+  <p class="pen">Trampas evitadas: <code>no causalidad desde correlación</code> · <code>% con num/den</code></p>
+</section>
+
+<!-- CASO 3 -->
+<section class="case">
+  <div class="case-head"><span class="case-num">Caso 3</span><span class="case-name">Julio duró doce días y el titular duró para siempre</span></div>
+  <div class="verdicts">
+    <div class="v lie"><div class="tag">✗ El titular</div><p class="headline">"Se acabó la fiesta: julio cae 57%"</p></div>
+    <div class="v truth"><div class="tag">✓ La realidad</div><p>Julio-2026 solo tiene <b>12 de 31 días</b> registrados. A ritmo diario homólogo, la asistencia va <b>+11.5%</b>. El signo se invierte.</p></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num">38.71%</div><div class="lab">Cobertura de julio-2026<br>(12 / 31 días)</div></div>
+    <div class="stat"><div class="num r">−56.8%</div><div class="lab">Caída bruta (mes vs mes)<br>121,281 vs 281,044</div></div>
+    <div class="stat"><div class="num g">+11.5%</div><div class="lab">Ritmo diario (homólogo)<br>10,107 vs 9,066 /día</div></div>
+  </div>
+  <div class="chart">
+    <div class="ct">El mismo dato, dos denominadores — y cambia de signo</div>
+    <div class="task">Tarea: comparar magnitud absoluta vs. tasa (polaridad respecto de 0)</div>
+    <div class="div">
+      <div class="dl" style="display:grid;grid-template-columns:1fr 1fr"><span>← peor que 2025</span><span style="text-align:right">mejor que 2025 →</span></div>
+      <div style="position:relative">
+        <div class="zero"></div>
+        <div class="dr"><div style="justify-self:end"><div class="dbar neg" style="width:95%">Caída bruta −56.8%</div></div><div></div></div>
+        <div class="dr"><div></div><div style="justify-self:start"><div class="dbar pos" style="width:19%">Ritmo diario +11.5%</div></div></div>
+      </div>
+    </div>
+  </div>
+  <p class="twist"><b>El giro:</b> comparar el total de 12 días contra un mes completo de 31 no son periodos homólogos. <code>LOOKUP(SUM([asistentes]),-12)</code> arrastra esa trampa; hay que comparar días homólogos o el ritmo diario. Un pico estacional (jul/dic) y el quiebre logístico de Loreto/Ucayali son parte de la serie, no tendencias nuevas.</p>
+  <p class="pen">Trampas evitadas: <code>periodos homólogos</code> · <code>% con num/den</code></p>
+</section>
+
+<!-- CASO 4 -->
+<section class="case">
+  <div class="case-head"><span class="case-num">Caso 4</span><span class="case-name">El mapa de la pasión que en realidad era el mapa del tamaño</span></div>
+  <div class="verdicts">
+    <div class="v lie"><div class="tag">✗ El titular</div><p class="headline">"Mapa definitivo: Lima ama más al ChasquiFest"</p></div>
+    <div class="v truth"><div class="tag">✓ La realidad</div><p>Es el mapa de la <b>población</b>. Normalizado por habitante, <b>Cusco</b> lidera el alcance; Lima cae fuera del top-5. Cada ranking responde otra pregunta.</p></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num">462,690</div><div class="lab">Lima: mayor volumen<br>(asistentes 2025)</div></div>
+    <div class="stat"><div class="num g">157.9</div><div class="lab">Cusco: mayor alcance<br>por 1,000 hab</div></div>
+    <div class="stat"><div class="num">31.96</div><div class="lab">Lima: alcance/1,000 hab<br>(fuera del top-5)</div></div>
+    <div class="stat"><div class="num r">69.0</div><div class="lab">Cusco: más reclamos<br>por 10,000 asist.</div></div>
+  </div>
+  <div class="chart">
+    <div class="ct">Ranking por volumen vs. por alcance poblacional — se reordena por completo</div>
+    <div class="task">Tarea: comparar dos rankings (el líder cambia según el denominador)</div>
+    <div class="stack-lab">Por volumen — asistentes 2025 (denominador: ninguno)</div>
+    <div class="row"><div class="rl">Lima</div><div class="track"><div class="fill s1" style="width:100%"><span class="in">462,690</span></div></div></div>
+    <div class="row"><div class="rl">Cusco</div><div class="track"><div class="fill mut" style="width:60.9%"><span class="in">281,998</span></div></div></div>
+    <div class="row"><div class="rl">Arequipa</div><div class="track"><div class="fill mut" style="width:57.9%"><span class="in">268,001</span></div></div></div>
+    <div class="stack-lab" style="margin-top:16px">Por alcance — visitantes únicos / población × 1,000</div>
+    <div class="row"><div class="rl">Cusco</div><div class="track"><div class="fill s2" style="width:100%"><span class="in">157.9</span></div></div></div>
+    <div class="row"><div class="rl">Ayacucho</div><div class="track"><div class="fill mut" style="width:93%"><span class="in">146.9</span></div></div></div>
+    <div class="row"><div class="rl">Lima</div><div class="track"><div class="fill crit" style="width:20.2%"><span class="in">31.96</span></div></div></div>
+  </div>
+  <p class="twist"><b>El giro:</b> un coroplético de conteos brutos repite el mapa de población. Para "¿dónde reforzar seguridad?" se usa volumen; para "¿dónde ampliar alcance?", la tasa poblacional; para "¿dónde mejorar experiencia?", la tasa de reclamos. Ninguno es falso — responden decisiones distintas. (Y escalar el <b>diámetro</b> al valor exagera Lima al cuadrado: 3.4× reales se ven como 11.8×.)</p>
+  <p class="pen">Trampas evitadas: <code>% con num/den</code> · <code>gráfico con su tarea</code> · <code>no inferir afecto de una tasa</code></p>
+</section>
+
+<!-- CASO 5 -->
+<section class="case">
+  <div class="case-head"><span class="case-num">Caso 5</span><span class="case-name">Killa, el algoritmo y el juicio final</span></div>
+  <div class="verdicts">
+    <div class="v lie"><div class="tag">✗ El titular</div><p class="headline">"Killa causó el boom: el video elevó las ventas +108%"</p></div>
+    <div class="v truth"><div class="tag">✓ La realidad</div><p>Todo se movió a la vez: sedes abiertas <b>8→12</b>, inversión <b>×2.9</b>, promos <b>0→54%</b>. En sedes ya abiertas el cambio es <b>−13%</b>. Efecto <b>no identificable</b>.</p></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num">8 → 12</div><div class="lab">Sedes abiertas antes → después</div></div>
+    <div class="stat"><div class="num">×2.9</div><div class="lab">Inversión publicitaria<br>S/254 → S/732 /día</div></div>
+    <div class="stat"><div class="num">0 → 54%</div><div class="lab">Días con promoción activa</div></div>
+    <div class="stat"><div class="num">0.28→0.04</div><div class="lab">R² vistas↔entradas<br>al controlar confusores</div></div>
+  </div>
+  <div class="chart">
+    <div class="ct">La diferencia antes/después según qué se compara</div>
+    <div class="task">Tarea: comparar el "efecto" bruto vs. controlado (polaridad respecto de 0)</div>
+    <div class="div">
+      <div style="position:relative">
+        <div class="zero"></div>
+        <div class="dr"><div></div><div style="justify-self:start"><div class="dbar pos" style="width:95%">Comparación ingenua (todo) +100%</div></div></div>
+        <div class="dr"><div style="justify-self:end"><div class="dbar neg" style="width:12%">Solo sedes ya abiertas −13%</div></div><div></div></div>
+      </div>
+    </div>
+  </div>
+  <p class="twist"><b>El giro:</b> el <code>+108%</code> compara promedios por fila entre dos poblaciones distintas de sedes. Al restringir a las sedes que ya operaban antes del video, el efecto desaparece (−13%). Con datos observacionales confundidos por aperturas, inversión y promos, no se puede atribuir al video: la decisión honesta es un piloto escalonado con umbral pre-definido, no ampliar la campaña.</p>
+  <p class="pen">Trampas evitadas: <code>no causalidad desde correlación</code> · <code>periodos homólogos</code> · <code>KPI de vanidad ≠ KPI decisor</code></p>
+</section>
+
+</main>
+
+<footer>
+  <h3>Metodología</h3>
+  <p>Cada número se recalcula desde el CSV del caso en un notebook ejecutable (pandas). Regla de auditoría por respuesta: concepto técnico · evidencia con campos concretos · decisión de cálculo/diseño · límite o trade-off. Las fórmulas se dan en sintaxis Tableau y su símil en código.</p>
+  <ul>
+    <li><a href="https://github.com/R0SEWT/chasquifest-auditoria-visual">Repositorio (notebooks caso1–caso5, datos, respuestas)</a></li>
+    <li><a href="https://github.com/R0SEWT/chasquifest-auditoria-visual/blob/main/respuestas.md">respuestas.md — solucionario consolidado</a></li>
+  </ul>
+  <div class="disc"><b>Aviso:</b> ChasquiFest, Killa y todas las cifras son <b>ficticios y sintéticos</b>. Los nombres geográficos dan contexto peruano; los datos no describen el desempeño real de ninguna ciudad ni población.</div>
+</footer>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  function cur(){ return root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'); }
+  try{ var s=localStorage.getItem('cf-theme'); if(s) root.setAttribute('data-theme',s); }catch(e){}
+  btn.addEventListener('click', function(){
+    var n = cur()==='dark' ? 'light':'dark';
+    root.setAttribute('data-theme', n);
+    try{ localStorage.setItem('cf-theme', n); }catch(e){}
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+
+# Tooling / local
+.claude/
+.beads/
+.dolt/
+.DS_Store
+*.bak-*
+
+# NOTE: data/*.csv ARE committed on purpose (synthetic exam data).

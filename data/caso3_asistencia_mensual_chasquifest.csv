@@ -1,0 +1,373 @@
+mes,anio,numero_mes,sede_id,ciudad,departamento,macrozona,dias_observados,dias_del_mes,cobertura_periodo_pct,asistentes,meta_asistentes,cancelaciones,ingresos_soles,evento_contexto
+2024-01-01,2024,1,SED-01,Lima,Lima,Costa,31,31,100.0,31035,33300,1226,1130785.91,Sin quiebre registrado
+2024-01-01,2024,1,SED-02,Piura,Piura,Costa,31,31,100.0,17974,17020,636,635927.85,Sin quiebre registrado
+2024-01-01,2024,1,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,16557,18130,435,576260.95,Sin quiebre registrado
+2024-01-01,2024,1,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,13855,14430,619,526466.78,Sin quiebre registrado
+2024-01-01,2024,1,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,19438,18870,680,710956.46,Sin quiebre registrado
+2024-01-01,2024,1,SED-06,Cusco,Cusco,Sierra,31,31,100.0,19261,19610,416,748715.34,Sin quiebre registrado
+2024-01-01,2024,1,SED-07,Puno,Puno,Sierra,31,31,100.0,12749,12950,522,478858.33,Sin quiebre registrado
+2024-01-01,2024,1,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,10672,10360,485,396837.7,Sin quiebre registrado
+2024-01-01,2024,1,SED-09,Huancayo,Junín,Sierra,31,31,100.0,14391,13320,775,538455.6,Sin quiebre registrado
+2024-01-01,2024,1,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,9196,11100,334,315888.02,Sin quiebre registrado
+2024-01-01,2024,1,SED-11,Iquitos,Loreto,Selva,31,31,100.0,11834,12210,455,420762.06,Sin quiebre registrado
+2024-01-01,2024,1,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,10078,10730,417,334352.43,Sin quiebre registrado
+2024-02-01,2024,2,SED-01,Lima,Lima,Costa,29,29,100.0,27701,29568,929,958508.66,Sin quiebre registrado
+2024-02-01,2024,2,SED-02,Piura,Piura,Costa,29,29,100.0,14052,15112,485,503757.61,Sin quiebre registrado
+2024-02-01,2024,2,SED-03,Trujillo,La Libertad,Costa,29,29,100.0,14944,16098,384,592563.23,Sin quiebre registrado
+2024-02-01,2024,2,SED-04,Chiclayo,Lambayeque,Costa,29,29,100.0,12159,12813,524,438185.06,Sin quiebre registrado
+2024-02-01,2024,2,SED-05,Arequipa,Arequipa,Sierra,29,29,100.0,15332,16755,385,552242.51,Sin quiebre registrado
+2024-02-01,2024,2,SED-06,Cusco,Cusco,Sierra,29,29,100.0,17002,17412,251,615011.32,Sin quiebre registrado
+2024-02-01,2024,2,SED-07,Puno,Puno,Sierra,29,29,100.0,10221,11499,449,372356.63,Sin quiebre registrado
+2024-02-01,2024,2,SED-08,Ayacucho,Ayacucho,Sierra,29,29,100.0,7944,9199,176,277438.27,Sin quiebre registrado
+2024-02-01,2024,2,SED-09,Huancayo,Junín,Sierra,29,29,100.0,11056,11827,401,399133.0,Sin quiebre registrado
+2024-02-01,2024,2,SED-10,Tarapoto,San Martín,Selva,29,29,100.0,9411,9856,421,328242.65,Sin quiebre registrado
+2024-02-01,2024,2,SED-11,Iquitos,Loreto,Selva,29,29,100.0,10283,10842,462,384040.96,Sin quiebre registrado
+2024-02-01,2024,2,SED-12,Pucallpa,Ucayali,Selva,29,29,100.0,8878,9527,246,324015.59,Sin quiebre registrado
+2024-03-01,2024,3,SED-01,Lima,Lima,Costa,31,31,100.0,30597,33899,1258,1123769.9,Sin quiebre registrado
+2024-03-01,2024,3,SED-02,Piura,Piura,Costa,31,31,100.0,16360,17326,694,633197.23,Sin quiebre registrado
+2024-03-01,2024,3,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,17290,18456,572,635974.01,Sin quiebre registrado
+2024-03-01,2024,3,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,14380,14690,512,518449.75,Sin quiebre registrado
+2024-03-01,2024,3,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,16189,19210,513,608497.37,Sin quiebre registrado
+2024-03-01,2024,3,SED-06,Cusco,Cusco,Sierra,31,31,100.0,18964,19963,602,687546.36,Sin quiebre registrado
+2024-03-01,2024,3,SED-07,Puno,Puno,Sierra,31,31,100.0,12531,13183,337,459341.78,Sin quiebre registrado
+2024-03-01,2024,3,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,9854,10546,466,379252.82,Sin quiebre registrado
+2024-03-01,2024,3,SED-09,Huancayo,Junín,Sierra,31,31,100.0,13191,13560,150,457662.89,Sin quiebre registrado
+2024-03-01,2024,3,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,10218,11300,429,378084.98,Sin quiebre registrado
+2024-03-01,2024,3,SED-11,Iquitos,Loreto,Selva,31,31,100.0,11935,12430,492,444874.68,Sin quiebre registrado
+2024-03-01,2024,3,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,11420,10923,518,402627.49,Sin quiebre registrado
+2024-04-01,2024,4,SED-01,Lima,Lima,Costa,30,30,100.0,34735,34199,1682,1245675.4,Sin quiebre registrado
+2024-04-01,2024,4,SED-02,Piura,Piura,Costa,30,30,100.0,18115,17480,672,682547.92,Sin quiebre registrado
+2024-04-01,2024,4,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,19556,18620,468,740299.86,Sin quiebre registrado
+2024-04-01,2024,4,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,14335,14820,436,515560.81,Sin quiebre registrado
+2024-04-01,2024,4,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,17774,19379,955,628182.59,Sin quiebre registrado
+2024-04-01,2024,4,SED-06,Cusco,Cusco,Sierra,30,30,100.0,18682,20139,582,685633.7,Sin quiebre registrado
+2024-04-01,2024,4,SED-07,Puno,Puno,Sierra,30,30,100.0,13122,13300,735,453965.08,Sin quiebre registrado
+2024-04-01,2024,4,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,10201,10640,373,384531.45,Sin quiebre registrado
+2024-04-01,2024,4,SED-09,Huancayo,Junín,Sierra,30,30,100.0,13343,13680,431,474987.18,Sin quiebre registrado
+2024-04-01,2024,4,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,11446,11400,284,438360.0,Sin quiebre registrado
+2024-04-01,2024,4,SED-11,Iquitos,Loreto,Selva,30,30,100.0,13400,12540,525,485877.87,Sin quiebre registrado
+2024-04-01,2024,4,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,11017,11020,295,435792.05,Sin quiebre registrado
+2024-05-01,2024,5,SED-01,Lima,Lima,Costa,31,31,100.0,32692,34499,1396,1136400.86,Sin quiebre registrado
+2024-05-01,2024,5,SED-02,Piura,Piura,Costa,31,31,100.0,15425,17633,626,557393.99,Sin quiebre registrado
+2024-05-01,2024,5,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,18238,18783,339,673998.47,Sin quiebre registrado
+2024-05-01,2024,5,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,14468,14949,641,544138.53,Sin quiebre registrado
+2024-05-01,2024,5,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,20063,19549,884,759881.91,Sin quiebre registrado
+2024-05-01,2024,5,SED-06,Cusco,Cusco,Sierra,31,31,100.0,19760,20316,642,700202.44,Sin quiebre registrado
+2024-05-01,2024,5,SED-07,Puno,Puno,Sierra,31,31,100.0,13021,13416,764,467199.8,Sin quiebre registrado
+2024-05-01,2024,5,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,10614,10733,510,385507.35,Sin quiebre registrado
+2024-05-01,2024,5,SED-09,Huancayo,Junín,Sierra,31,31,100.0,13168,13800,424,488244.59,Sin quiebre registrado
+2024-05-01,2024,5,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,11039,11500,330,378699.36,Sin quiebre registrado
+2024-05-01,2024,5,SED-11,Iquitos,Loreto,Selva,31,31,100.0,11056,12650,408,392144.8,Sin quiebre registrado
+2024-05-01,2024,5,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,10589,11116,485,381787.3,Sin quiebre registrado
+2024-06-01,2024,6,SED-01,Lima,Lima,Costa,30,30,100.0,36016,34798,1128,1304844.49,Sin quiebre registrado
+2024-06-01,2024,6,SED-02,Piura,Piura,Costa,30,30,100.0,17140,17786,647,654717.81,Sin quiebre registrado
+2024-06-01,2024,6,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,18426,18946,413,688263.81,Sin quiebre registrado
+2024-06-01,2024,6,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,13868,15079,740,519995.32,Sin quiebre registrado
+2024-06-01,2024,6,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,18057,19719,615,685341.97,Sin quiebre registrado
+2024-06-01,2024,6,SED-06,Cusco,Cusco,Sierra,30,30,100.0,20811,20492,423,785029.22,Sin quiebre registrado
+2024-06-01,2024,6,SED-07,Puno,Puno,Sierra,30,30,100.0,12271,13533,510,441208.44,Sin quiebre registrado
+2024-06-01,2024,6,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,10231,10826,423,363520.21,Sin quiebre registrado
+2024-06-01,2024,6,SED-09,Huancayo,Junín,Sierra,30,30,100.0,13564,13919,429,505040.92,Sin quiebre registrado
+2024-06-01,2024,6,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,12215,11600,674,466699.7,Sin quiebre registrado
+2024-06-01,2024,6,SED-11,Iquitos,Loreto,Selva,30,30,100.0,12945,12759,289,448467.41,Sin quiebre registrado
+2024-06-01,2024,6,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,11350,11213,214,411042.84,Sin quiebre registrado
+2024-07-01,2024,7,SED-01,Lima,Lima,Costa,31,31,100.0,41911,44926,1298,1562266.94,Sin quiebre registrado
+2024-07-01,2024,7,SED-02,Piura,Piura,Costa,31,31,100.0,23604,22962,802,817037.78,Sin quiebre registrado
+2024-07-01,2024,7,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,24903,24460,632,954198.48,Sin quiebre registrado
+2024-07-01,2024,7,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,17659,19468,501,630582.16,Sin quiebre registrado
+2024-07-01,2024,7,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,23862,25458,980,878814.14,Sin quiebre registrado
+2024-07-01,2024,7,SED-06,Cusco,Cusco,Sierra,31,31,100.0,26903,26456,937,1022653.77,Sin quiebre registrado
+2024-07-01,2024,7,SED-07,Puno,Puno,Sierra,31,31,100.0,16825,17471,865,583084.69,Sin quiebre registrado
+2024-07-01,2024,7,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,12374,13977,676,449361.56,Sin quiebre registrado
+2024-07-01,2024,7,SED-09,Huancayo,Junín,Sierra,31,31,100.0,16909,17970,784,637426.82,Sin quiebre registrado
+2024-07-01,2024,7,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,16277,14975,761,590519.81,Sin quiebre registrado
+2024-07-01,2024,7,SED-11,Iquitos,Loreto,Selva,31,31,100.0,15842,16473,590,546035.04,Sin quiebre registrado
+2024-07-01,2024,7,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,13778,14476,258,518609.29,Sin quiebre registrado
+2024-08-01,2024,8,SED-01,Lima,Lima,Costa,31,31,100.0,34221,35398,1311,1225838.54,Sin quiebre registrado
+2024-08-01,2024,8,SED-02,Piura,Piura,Costa,31,31,100.0,17643,18092,824,687424.83,Sin quiebre registrado
+2024-08-01,2024,8,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,21727,19272,864,822728.82,Sin quiebre registrado
+2024-08-01,2024,8,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,15536,15339,217,509998.05,Sin quiebre registrado
+2024-08-01,2024,8,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,19559,20059,321,688266.32,Sin quiebre registrado
+2024-08-01,2024,8,SED-06,Cusco,Cusco,Sierra,31,31,100.0,20088,20845,748,724634.25,Sin quiebre registrado
+2024-08-01,2024,8,SED-07,Puno,Puno,Sierra,31,31,100.0,13167,13766,444,495219.86,Sin quiebre registrado
+2024-08-01,2024,8,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,10625,11013,310,400010.14,Sin quiebre registrado
+2024-08-01,2024,8,SED-09,Huancayo,Junín,Sierra,31,31,100.0,13058,14159,299,468841.59,Sin quiebre registrado
+2024-08-01,2024,8,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,11775,11799,295,416430.99,Sin quiebre registrado
+2024-08-01,2024,8,SED-11,Iquitos,Loreto,Selva,31,31,100.0,13030,12979,661,467567.12,Sin quiebre registrado
+2024-08-01,2024,8,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,10338,11406,271,372802.94,Sin quiebre registrado
+2024-09-01,2024,9,SED-01,Lima,Lima,Costa,30,30,100.0,32655,35698,873,1179020.64,Sin quiebre registrado
+2024-09-01,2024,9,SED-02,Piura,Piura,Costa,30,30,100.0,19271,18245,636,740950.47,Sin quiebre registrado
+2024-09-01,2024,9,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,19141,19435,819,728959.35,Sin quiebre registrado
+2024-09-01,2024,9,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,15211,15469,364,509034.1,Sin quiebre registrado
+2024-09-01,2024,9,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,20369,20229,380,749172.08,Sin quiebre registrado
+2024-09-01,2024,9,SED-06,Cusco,Cusco,Sierra,30,30,100.0,21537,21022,767,795615.87,Sin quiebre registrado
+2024-09-01,2024,9,SED-07,Puno,Puno,Sierra,30,30,100.0,15210,13882,646,586321.78,Sin quiebre registrado
+2024-09-01,2024,9,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,9981,11106,237,380226.26,Sin quiebre registrado
+2024-09-01,2024,9,SED-09,Huancayo,Junín,Sierra,30,30,100.0,13596,14279,604,475424.73,Sin quiebre registrado
+2024-09-01,2024,9,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,11294,11899,333,430235.68,Sin quiebre registrado
+2024-09-01,2024,9,SED-11,Iquitos,Loreto,Selva,30,30,100.0,12183,13089,608,445904.93,Sin quiebre registrado
+2024-09-01,2024,9,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,10733,11503,476,370270.36,Sin quiebre registrado
+2024-10-01,2024,10,SED-01,Lima,Lima,Costa,31,31,100.0,37619,35997,2317,1363133.96,Sin quiebre registrado
+2024-10-01,2024,10,SED-02,Piura,Piura,Costa,31,31,100.0,18479,18399,725,645735.37,Sin quiebre registrado
+2024-10-01,2024,10,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,20198,19599,832,787136.3,Sin quiebre registrado
+2024-10-01,2024,10,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,15966,15599,575,564450.73,Sin quiebre registrado
+2024-10-01,2024,10,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,20530,20398,520,779586.04,Sin quiebre registrado
+2024-10-01,2024,10,SED-06,Cusco,Cusco,Sierra,31,31,100.0,19897,21198,699,721878.16,Sin quiebre registrado
+2024-10-01,2024,10,SED-07,Puno,Puno,Sierra,31,31,100.0,14549,13999,545,551387.22,Sin quiebre registrado
+2024-10-01,2024,10,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,10014,11199,282,357834.7,Sin quiebre registrado
+2024-10-01,2024,10,SED-09,Huancayo,Junín,Sierra,31,31,100.0,13551,14399,408,494095.66,Sin quiebre registrado
+2024-10-01,2024,10,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,12481,11999,544,492522.6,Sin quiebre registrado
+2024-10-01,2024,10,SED-11,Iquitos,Loreto,Selva,31,31,100.0,12066,13199,341,436223.69,Sin quiebre registrado
+2024-10-01,2024,10,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,10452,11599,395,387553.9,Sin quiebre registrado
+2024-11-01,2024,11,SED-01,Lima,Lima,Costa,30,30,100.0,37287,36297,1227,1326412.36,Sin quiebre registrado
+2024-11-01,2024,11,SED-02,Piura,Piura,Costa,30,30,100.0,20001,18552,725,720028.87,Sin quiebre registrado
+2024-11-01,2024,11,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,20753,19762,1294,781301.29,Sin quiebre registrado
+2024-11-01,2024,11,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,14522,15729,580,565127.31,Sin quiebre registrado
+2024-11-01,2024,11,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,20544,20568,1064,713914.19,Sin quiebre registrado
+2024-11-01,2024,11,SED-06,Cusco,Cusco,Sierra,30,30,100.0,20557,21375,739,717821.9,Sin quiebre registrado
+2024-11-01,2024,11,SED-07,Puno,Puno,Sierra,30,30,100.0,13931,14116,413,499088.47,Sin quiebre registrado
+2024-11-01,2024,11,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,11237,11292,251,404649.01,Sin quiebre registrado
+2024-11-01,2024,11,SED-09,Huancayo,Junín,Sierra,30,30,100.0,13861,14519,643,485982.4,Sin quiebre registrado
+2024-11-01,2024,11,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,12738,12099,440,425363.43,Sin quiebre registrado
+2024-11-01,2024,11,SED-11,Iquitos,Loreto,Selva,30,30,100.0,12868,13309,420,458296.13,Sin quiebre registrado
+2024-11-01,2024,11,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,10813,11696,371,379513.47,Sin quiebre registrado
+2024-12-01,2024,12,SED-01,Lima,Lima,Costa,31,31,100.0,51775,51967,2484,1891997.69,Sin quiebre registrado
+2024-12-01,2024,12,SED-02,Piura,Piura,Costa,31,31,100.0,25787,26561,813,998567.33,Sin quiebre registrado
+2024-12-01,2024,12,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,30297,28293,703,1135016.74,Sin quiebre registrado
+2024-12-01,2024,12,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,22911,22519,1125,832665.85,Sin quiebre registrado
+2024-12-01,2024,12,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,28720,29448,1177,1070652.86,Sin quiebre registrado
+2024-12-01,2024,12,SED-06,Cusco,Cusco,Sierra,31,31,100.0,27220,30603,828,1037328.13,Sin quiebre registrado
+2024-12-01,2024,12,SED-07,Puno,Puno,Sierra,31,31,100.0,19162,20210,499,711500.59,Sin quiebre registrado
+2024-12-01,2024,12,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,15693,16168,587,604752.78,Sin quiebre registrado
+2024-12-01,2024,12,SED-09,Huancayo,Junín,Sierra,31,31,100.0,19175,20787,954,713240.5,Sin quiebre registrado
+2024-12-01,2024,12,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,15831,17322,592,596141.46,Sin quiebre registrado
+2024-12-01,2024,12,SED-11,Iquitos,Loreto,Selva,31,31,100.0,19351,19055,335,673134.19,Sin quiebre registrado
+2024-12-01,2024,12,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,16526,16745,237,630995.43,Sin quiebre registrado
+2025-01-01,2025,1,SED-01,Lima,Lima,Costa,31,31,100.0,33551,36896,951,1232975.43,Sin quiebre registrado
+2025-01-01,2025,1,SED-02,Piura,Piura,Costa,31,31,100.0,20091,18858,842,715259.64,Sin quiebre registrado
+2025-01-01,2025,1,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,19806,20088,866,737180.86,Sin quiebre registrado
+2025-01-01,2025,1,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,15665,15988,817,532124.2,Sin quiebre registrado
+2025-01-01,2025,1,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,21461,20908,822,804032.87,Sin quiebre registrado
+2025-01-01,2025,1,SED-06,Cusco,Cusco,Sierra,31,31,100.0,20935,21728,622,775530.82,Sin quiebre registrado
+2025-01-01,2025,1,SED-07,Puno,Puno,Sierra,31,31,100.0,14061,14349,366,532888.24,Sin quiebre registrado
+2025-01-01,2025,1,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,11469,11479,420,432508.81,Sin quiebre registrado
+2025-01-01,2025,1,SED-09,Huancayo,Junín,Sierra,31,31,100.0,13522,14759,529,487105.11,Sin quiebre registrado
+2025-01-01,2025,1,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,11379,12299,258,418652.02,Sin quiebre registrado
+2025-01-01,2025,1,SED-11,Iquitos,Loreto,Selva,31,31,100.0,13411,13529,583,483112.43,Sin quiebre registrado
+2025-01-01,2025,1,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,11242,11889,352,397806.42,Sin quiebre registrado
+2025-02-01,2025,2,SED-01,Lima,Lima,Costa,28,28,100.0,30688,32733,1460,1091986.28,Sin quiebre registrado
+2025-02-01,2025,2,SED-02,Piura,Piura,Costa,28,28,100.0,16316,16730,470,574472.88,Sin quiebre registrado
+2025-02-01,2025,2,SED-03,Trujillo,La Libertad,Costa,28,28,100.0,16247,17821,656,655221.58,Sin quiebre registrado
+2025-02-01,2025,2,SED-04,Chiclayo,Lambayeque,Costa,28,28,100.0,15345,14184,720,609563.63,Sin quiebre registrado
+2025-02-01,2025,2,SED-05,Arequipa,Arequipa,Sierra,28,28,100.0,17618,18548,640,621772.18,Sin quiebre registrado
+2025-02-01,2025,2,SED-06,Cusco,Cusco,Sierra,28,28,100.0,17550,19276,841,602503.96,Sin quiebre registrado
+2025-02-01,2025,2,SED-07,Puno,Puno,Sierra,28,28,100.0,12539,12729,400,471852.87,Sin quiebre registrado
+2025-02-01,2025,2,SED-08,Ayacucho,Ayacucho,Sierra,28,28,100.0,10312,10183,297,383121.35,Sin quiebre registrado
+2025-02-01,2025,2,SED-09,Huancayo,Junín,Sierra,28,28,100.0,13579,13093,551,539934.16,Sin quiebre registrado
+2025-02-01,2025,2,SED-10,Tarapoto,San Martín,Selva,28,28,100.0,11393,10911,522,425180.59,Sin quiebre registrado
+2025-02-01,2025,2,SED-11,Iquitos,Loreto,Selva,28,28,100.0,12236,12002,578,428304.47,Sin quiebre registrado
+2025-02-01,2025,2,SED-12,Pucallpa,Ucayali,Selva,28,28,100.0,9928,10547,361,392168.43,Sin quiebre registrado
+2025-03-01,2025,3,SED-01,Lima,Lima,Costa,31,31,100.0,35692,37496,1560,1298281.59,Sin quiebre registrado
+2025-03-01,2025,3,SED-02,Piura,Piura,Costa,31,31,100.0,20000,19165,818,731224.72,Sin quiebre registrado
+2025-03-01,2025,3,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,18407,20414,765,630469.22,Sin quiebre registrado
+2025-03-01,2025,3,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,16621,16248,842,601311.21,Sin quiebre registrado
+2025-03-01,2025,3,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,21378,21248,924,775420.72,Sin quiebre registrado
+2025-03-01,2025,3,SED-06,Cusco,Cusco,Sierra,31,31,100.0,22136,22081,870,771552.66,Sin quiebre registrado
+2025-03-01,2025,3,SED-07,Puno,Puno,Sierra,31,31,100.0,14892,14582,582,555003.77,Sin quiebre registrado
+2025-03-01,2025,3,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,11733,11665,492,446202.52,Sin quiebre registrado
+2025-03-01,2025,3,SED-09,Huancayo,Junín,Sierra,31,31,100.0,14883,14998,628,560036.86,Sin quiebre registrado
+2025-03-01,2025,3,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,11658,12499,258,421773.43,Sin quiebre registrado
+2025-03-01,2025,3,SED-11,Iquitos,Loreto,Selva,31,31,100.0,8518,13748,292,318023.53,Interrupción logística ficticia
+2025-03-01,2025,3,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,7429,12082,320,290533.11,Interrupción logística ficticia
+2025-04-01,2025,4,SED-01,Lima,Lima,Costa,30,30,100.0,33503,37796,837,1215967.97,Sin quiebre registrado
+2025-04-01,2025,4,SED-02,Piura,Piura,Costa,30,30,100.0,18639,19318,467,674364.66,Sin quiebre registrado
+2025-04-01,2025,4,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,19790,20578,797,754899.73,Sin quiebre registrado
+2025-04-01,2025,4,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,16036,16378,680,609641.26,Sin quiebre registrado
+2025-04-01,2025,4,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,21314,21417,812,727928.36,Sin quiebre registrado
+2025-04-01,2025,4,SED-06,Cusco,Cusco,Sierra,30,30,100.0,24738,22257,566,918904.35,Sin quiebre registrado
+2025-04-01,2025,4,SED-07,Puno,Puno,Sierra,30,30,100.0,14781,14698,373,547086.44,Sin quiebre registrado
+2025-04-01,2025,4,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,11426,11759,458,407695.65,Sin quiebre registrado
+2025-04-01,2025,4,SED-09,Huancayo,Junín,Sierra,30,30,100.0,14700,15118,630,511310.43,Sin quiebre registrado
+2025-04-01,2025,4,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,12255,12598,269,453976.52,Sin quiebre registrado
+2025-04-01,2025,4,SED-11,Iquitos,Loreto,Selva,30,30,100.0,8485,13858,162,310968.36,Interrupción logística ficticia
+2025-04-01,2025,4,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,7109,12179,169,253394.45,Interrupción logística ficticia
+2025-05-01,2025,5,SED-01,Lima,Lima,Costa,31,31,100.0,37888,38095,906,1381809.84,Sin quiebre registrado
+2025-05-01,2025,5,SED-02,Piura,Piura,Costa,31,31,100.0,19107,19471,731,687223.09,Sin quiebre registrado
+2025-05-01,2025,5,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,20367,20741,204,752940.07,Sin quiebre registrado
+2025-05-01,2025,5,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,15445,16508,154,576811.28,Sin quiebre registrado
+2025-05-01,2025,5,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,22056,21587,819,838486.28,Sin quiebre registrado
+2025-05-01,2025,5,SED-06,Cusco,Cusco,Sierra,31,31,100.0,20591,22434,813,702844.48,Sin quiebre registrado
+2025-05-01,2025,5,SED-07,Puno,Puno,Sierra,31,31,100.0,15035,14815,558,588476.69,Sin quiebre registrado
+2025-05-01,2025,5,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,11250,11852,414,397096.99,Sin quiebre registrado
+2025-05-01,2025,5,SED-09,Huancayo,Junín,Sierra,31,31,100.0,14052,15238,473,512134.64,Sin quiebre registrado
+2025-05-01,2025,5,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,11602,12698,674,414921.04,Sin quiebre registrado
+2025-05-01,2025,5,SED-11,Iquitos,Loreto,Selva,31,31,100.0,7459,13968,463,296476.92,Interrupción logística ficticia
+2025-05-01,2025,5,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,7147,12275,312,268844.83,Interrupción logística ficticia
+2025-06-01,2025,6,SED-01,Lima,Lima,Costa,30,30,100.0,37101,38395,983,1340198.52,Sin quiebre registrado
+2025-06-01,2025,6,SED-02,Piura,Piura,Costa,30,30,100.0,18630,19624,369,676973.89,Sin quiebre registrado
+2025-06-01,2025,6,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,18716,20904,659,667280.91,Sin quiebre registrado
+2025-06-01,2025,6,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,16198,16638,554,541724.56,Sin quiebre registrado
+2025-06-01,2025,6,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,21786,21757,597,801794.15,Sin quiebre registrado
+2025-06-01,2025,6,SED-06,Cusco,Cusco,Sierra,30,30,100.0,23422,22610,1173,860446.0,Sin quiebre registrado
+2025-06-01,2025,6,SED-07,Puno,Puno,Sierra,30,30,100.0,15235,14931,698,533632.79,Sin quiebre registrado
+2025-06-01,2025,6,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,12391,11945,412,441337.04,Sin quiebre registrado
+2025-06-01,2025,6,SED-09,Huancayo,Junín,Sierra,30,30,100.0,14814,15358,454,550756.0,Sin quiebre registrado
+2025-06-01,2025,6,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,13036,12798,420,496491.81,Sin quiebre registrado
+2025-06-01,2025,6,SED-11,Iquitos,Loreto,Selva,30,30,100.0,13665,14078,372,480859.36,Sin quiebre registrado
+2025-06-01,2025,6,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,11520,12372,459,396279.12,Sin quiebre registrado
+2025-07-01,2025,7,SED-01,Lima,Lima,Costa,31,31,100.0,47057,49529,1810,1654576.39,Sin quiebre registrado
+2025-07-01,2025,7,SED-02,Piura,Piura,Costa,31,31,100.0,25099,25315,916,858240.93,Sin quiebre registrado
+2025-07-01,2025,7,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,26386,26966,835,978000.3,Sin quiebre registrado
+2025-07-01,2025,7,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,18830,21463,665,692974.18,Sin quiebre registrado
+2025-07-01,2025,7,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,27271,28066,866,1002174.82,Sin quiebre registrado
+2025-07-01,2025,7,SED-06,Cusco,Cusco,Sierra,31,31,100.0,31857,29167,1122,1197829.07,Sin quiebre registrado
+2025-07-01,2025,7,SED-07,Puno,Puno,Sierra,31,31,100.0,20345,19261,542,774982.23,Sin quiebre registrado
+2025-07-01,2025,7,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,16569,15409,527,584503.24,Sin quiebre registrado
+2025-07-01,2025,7,SED-09,Huancayo,Junín,Sierra,31,31,100.0,20004,19812,609,745740.36,Sin quiebre registrado
+2025-07-01,2025,7,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,15352,16510,346,561069.02,Sin quiebre registrado
+2025-07-01,2025,7,SED-11,Iquitos,Loreto,Selva,31,31,100.0,16865,18161,896,593248.26,Sin quiebre registrado
+2025-07-01,2025,7,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,15409,15959,588,541256.56,Sin quiebre registrado
+2025-08-01,2025,8,SED-01,Lima,Lima,Costa,31,31,100.0,37605,38994,1043,1333405.19,Sin quiebre registrado
+2025-08-01,2025,8,SED-02,Piura,Piura,Costa,31,31,100.0,20479,19930,638,739661.15,Sin quiebre registrado
+2025-08-01,2025,8,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,20614,21230,875,787765.9,Sin quiebre registrado
+2025-08-01,2025,8,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,17534,16898,583,643227.58,Sin quiebre registrado
+2025-08-01,2025,8,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,19516,22097,579,718198.69,Sin quiebre registrado
+2025-08-01,2025,8,SED-06,Cusco,Cusco,Sierra,31,31,100.0,24691,22963,916,919429.11,Sin quiebre registrado
+2025-08-01,2025,8,SED-07,Puno,Puno,Sierra,31,31,100.0,14099,15164,420,521827.22,Sin quiebre registrado
+2025-08-01,2025,8,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,11644,12132,555,438022.17,Sin quiebre registrado
+2025-08-01,2025,8,SED-09,Huancayo,Junín,Sierra,31,31,100.0,15769,15598,738,599429.24,Sin quiebre registrado
+2025-08-01,2025,8,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,12571,12998,396,455685.38,Sin quiebre registrado
+2025-08-01,2025,8,SED-11,Iquitos,Loreto,Selva,31,31,100.0,13337,14298,532,512669.04,Sin quiebre registrado
+2025-08-01,2025,8,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,12233,12565,336,462963.27,Sin quiebre registrado
+2025-09-01,2025,9,SED-01,Lima,Lima,Costa,30,30,100.0,37035,39294,1082,1310159.77,Sin quiebre registrado
+2025-09-01,2025,9,SED-02,Piura,Piura,Costa,30,30,100.0,20982,20084,783,773621.39,Sin quiebre registrado
+2025-09-01,2025,9,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,19830,21393,780,703971.5,Sin quiebre registrado
+2025-09-01,2025,9,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,18219,17027,620,660952.61,Sin quiebre registrado
+2025-09-01,2025,9,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,22110,22267,619,825104.3,Sin quiebre registrado
+2025-09-01,2025,9,SED-06,Cusco,Cusco,Sierra,30,30,100.0,19393,23140,1003,771645.02,Sin quiebre registrado
+2025-09-01,2025,9,SED-07,Puno,Puno,Sierra,30,30,100.0,15523,15281,704,569526.13,Sin quiebre registrado
+2025-09-01,2025,9,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,11919,12225,512,458064.16,Sin quiebre registrado
+2025-09-01,2025,9,SED-09,Huancayo,Junín,Sierra,30,30,100.0,15096,15718,288,544854.28,Sin quiebre registrado
+2025-09-01,2025,9,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,12341,13098,512,442133.46,Sin quiebre registrado
+2025-09-01,2025,9,SED-11,Iquitos,Loreto,Selva,30,30,100.0,14542,14408,530,537218.12,Sin quiebre registrado
+2025-09-01,2025,9,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,11079,12661,272,413477.65,Sin quiebre registrado
+2025-10-01,2025,10,SED-01,Lima,Lima,Costa,31,31,100.0,36562,39594,790,1370714.64,Sin quiebre registrado
+2025-10-01,2025,10,SED-02,Piura,Piura,Costa,31,31,100.0,18924,20237,325,733414.32,Sin quiebre registrado
+2025-10-01,2025,10,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,22913,21557,595,873318.85,Sin quiebre registrado
+2025-10-01,2025,10,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,18697,17157,628,717827.7,Sin quiebre registrado
+2025-10-01,2025,10,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,22785,22436,633,853449.18,Sin quiebre registrado
+2025-10-01,2025,10,SED-06,Cusco,Cusco,Sierra,31,31,100.0,19385,23316,748,706682.72,Sin quiebre registrado
+2025-10-01,2025,10,SED-07,Puno,Puno,Sierra,31,31,100.0,15963,15398,441,541302.22,Sin quiebre registrado
+2025-10-01,2025,10,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,11907,12318,233,418739.63,Sin quiebre registrado
+2025-10-01,2025,10,SED-09,Huancayo,Junín,Sierra,31,31,100.0,15772,15837,870,528018.38,Sin quiebre registrado
+2025-10-01,2025,10,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,13677,13198,551,486731.82,Sin quiebre registrado
+2025-10-01,2025,10,SED-11,Iquitos,Loreto,Selva,31,31,100.0,13581,14518,196,503072.03,Sin quiebre registrado
+2025-10-01,2025,10,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,11466,12758,585,427611.69,Sin quiebre registrado
+2025-11-01,2025,11,SED-01,Lima,Lima,Costa,30,30,100.0,38606,39893,2381,1477140.78,Sin quiebre registrado
+2025-11-01,2025,11,SED-02,Piura,Piura,Costa,30,30,100.0,20329,20390,726,741630.15,Sin quiebre registrado
+2025-11-01,2025,11,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,21294,21720,665,808676.45,Sin quiebre registrado
+2025-11-01,2025,11,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,16429,17287,529,535371.16,Sin quiebre registrado
+2025-11-01,2025,11,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,21489,22606,1285,823210.49,Sin quiebre registrado
+2025-11-01,2025,11,SED-06,Cusco,Cusco,Sierra,30,30,100.0,23947,23493,657,859465.35,Sin quiebre registrado
+2025-11-01,2025,11,SED-07,Puno,Puno,Sierra,30,30,100.0,16947,15514,453,629062.63,Sin quiebre registrado
+2025-11-01,2025,11,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,11589,12411,315,427774.18,Sin quiebre registrado
+2025-11-01,2025,11,SED-09,Huancayo,Junín,Sierra,30,30,100.0,16803,15957,476,625944.25,Sin quiebre registrado
+2025-11-01,2025,11,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,11896,13298,591,412547.01,Sin quiebre registrado
+2025-11-01,2025,11,SED-11,Iquitos,Loreto,Selva,30,30,100.0,14087,14628,402,545403.48,Sin quiebre registrado
+2025-11-01,2025,11,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,13026,12855,373,461251.46,Sin quiebre registrado
+2025-12-01,2025,12,SED-01,Lima,Lima,Costa,31,31,100.0,57402,57074,1979,1971222.86,Sin quiebre registrado
+2025-12-01,2025,12,SED-02,Piura,Piura,Costa,31,31,100.0,28324,29171,1318,1091450.79,Sin quiebre registrado
+2025-12-01,2025,12,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,29590,31074,1083,1046964.05,Sin quiebre registrado
+2025-12-01,2025,12,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,24566,24732,872,919717.7,Sin quiebre registrado
+2025-12-01,2025,12,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,29217,32342,615,1084952.27,Sin quiebre registrado
+2025-12-01,2025,12,SED-06,Cusco,Cusco,Sierra,31,31,100.0,33353,33610,1606,1214253.86,Sin quiebre registrado
+2025-12-01,2025,12,SED-07,Puno,Puno,Sierra,31,31,100.0,23371,22196,880,810765.54,Sin quiebre registrado
+2025-12-01,2025,12,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,16167,17756,745,599732.46,Sin quiebre registrado
+2025-12-01,2025,12,SED-09,Huancayo,Junín,Sierra,31,31,100.0,22672,22830,351,813492.32,Sin quiebre registrado
+2025-12-01,2025,12,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,19228,19025,542,665698.71,Sin quiebre registrado
+2025-12-01,2025,12,SED-11,Iquitos,Loreto,Selva,31,31,100.0,20255,20927,613,720583.96,Sin quiebre registrado
+2025-12-01,2025,12,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,17317,18391,402,612050.71,Sin quiebre registrado
+2026-01-01,2026,1,SED-01,Lima,Lima,Costa,31,31,100.0,38741,40493,1990,1338581.28,Sin quiebre registrado
+2026-01-01,2026,1,SED-02,Piura,Piura,Costa,31,31,100.0,21667,20696,882,846587.66,Sin quiebre registrado
+2026-01-01,2026,1,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,24279,22046,1111,867118.14,Sin quiebre registrado
+2026-01-01,2026,1,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,16911,17547,629,624461.0,Sin quiebre registrado
+2026-01-01,2026,1,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,21968,22946,628,852194.7,Sin quiebre registrado
+2026-01-01,2026,1,SED-06,Cusco,Cusco,Sierra,31,31,100.0,23079,23846,982,825589.88,Sin quiebre registrado
+2026-01-01,2026,1,SED-07,Puno,Puno,Sierra,31,31,100.0,15713,15747,595,558766.7,Sin quiebre registrado
+2026-01-01,2026,1,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,13115,12598,458,482302.57,Sin quiebre registrado
+2026-01-01,2026,1,SED-09,Huancayo,Junín,Sierra,31,31,100.0,14627,16197,343,556650.81,Sin quiebre registrado
+2026-01-01,2026,1,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,14972,13498,466,564611.33,Sin quiebre registrado
+2026-01-01,2026,1,SED-11,Iquitos,Loreto,Selva,31,31,100.0,14449,14847,561,520035.16,Sin quiebre registrado
+2026-01-01,2026,1,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,13641,13048,711,501139.47,Sin quiebre registrado
+2026-02-01,2026,2,SED-01,Lima,Lima,Costa,28,28,100.0,34137,35897,1367,1231846.27,Sin quiebre registrado
+2026-02-01,2026,2,SED-02,Piura,Piura,Costa,28,28,100.0,15869,18348,794,587388.36,Sin quiebre registrado
+2026-02-01,2026,2,SED-03,Trujillo,La Libertad,Costa,28,28,100.0,17891,19544,551,662213.18,Sin quiebre registrado
+2026-02-01,2026,2,SED-04,Chiclayo,Lambayeque,Costa,28,28,100.0,15130,15556,406,554643.07,Sin quiebre registrado
+2026-02-01,2026,2,SED-05,Arequipa,Arequipa,Sierra,28,28,100.0,21151,20342,884,740466.82,Sin quiebre registrado
+2026-02-01,2026,2,SED-06,Cusco,Cusco,Sierra,28,28,100.0,21113,21140,510,793034.84,Sin quiebre registrado
+2026-02-01,2026,2,SED-07,Puno,Puno,Sierra,28,28,100.0,14354,13960,619,503330.39,Sin quiebre registrado
+2026-02-01,2026,2,SED-08,Ayacucho,Ayacucho,Sierra,28,28,100.0,10012,11168,275,334071.92,Sin quiebre registrado
+2026-02-01,2026,2,SED-09,Huancayo,Junín,Sierra,28,28,100.0,14832,14359,511,520795.76,Sin quiebre registrado
+2026-02-01,2026,2,SED-10,Tarapoto,San Martín,Selva,28,28,100.0,10276,11966,366,385178.98,Sin quiebre registrado
+2026-02-01,2026,2,SED-11,Iquitos,Loreto,Selva,28,28,100.0,12545,13162,480,491301.31,Sin quiebre registrado
+2026-02-01,2026,2,SED-12,Pucallpa,Ucayali,Selva,28,28,100.0,11326,11567,235,415523.5,Sin quiebre registrado
+2026-03-01,2026,3,SED-01,Lima,Lima,Costa,31,31,100.0,38466,41092,1440,1411843.2,Sin quiebre registrado
+2026-03-01,2026,3,SED-02,Piura,Piura,Costa,31,31,100.0,19967,21003,745,721929.51,Sin quiebre registrado
+2026-03-01,2026,3,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,21759,22372,1012,786288.29,Sin quiebre registrado
+2026-03-01,2026,3,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,14903,17807,710,581187.6,Sin quiebre registrado
+2026-03-01,2026,3,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,24544,23286,665,849355.51,Sin quiebre registrado
+2026-03-01,2026,3,SED-06,Cusco,Cusco,Sierra,31,31,100.0,22716,24199,604,816110.93,Sin quiebre registrado
+2026-03-01,2026,3,SED-07,Puno,Puno,Sierra,31,31,100.0,14416,15980,144,513826.32,Sin quiebre registrado
+2026-03-01,2026,3,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,12139,12784,524,453050.47,Sin quiebre registrado
+2026-03-01,2026,3,SED-09,Huancayo,Junín,Sierra,31,31,100.0,16590,16437,667,578795.63,Sin quiebre registrado
+2026-03-01,2026,3,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,12151,13697,439,450300.45,Sin quiebre registrado
+2026-03-01,2026,3,SED-11,Iquitos,Loreto,Selva,31,31,100.0,14297,15067,249,523935.91,Sin quiebre registrado
+2026-03-01,2026,3,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,12367,13241,466,498933.24,Sin quiebre registrado
+2026-04-01,2026,4,SED-01,Lima,Lima,Costa,30,30,100.0,40472,41392,1696,1490761.52,Sin quiebre registrado
+2026-04-01,2026,4,SED-02,Piura,Piura,Costa,30,30,100.0,19726,21156,777,742253.21,Sin quiebre registrado
+2026-04-01,2026,4,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,21594,22536,1005,769363.03,Sin quiebre registrado
+2026-04-01,2026,4,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,16929,17936,506,602832.63,Sin quiebre registrado
+2026-04-01,2026,4,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,22956,23455,933,795432.43,Sin quiebre registrado
+2026-04-01,2026,4,SED-06,Cusco,Cusco,Sierra,30,30,100.0,25148,24375,1076,955870.28,Sin quiebre registrado
+2026-04-01,2026,4,SED-07,Puno,Puno,Sierra,30,30,100.0,14305,16097,417,510813.48,Sin quiebre registrado
+2026-04-01,2026,4,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,13034,12877,589,475513.58,Sin quiebre registrado
+2026-04-01,2026,4,SED-09,Huancayo,Junín,Sierra,30,30,100.0,15042,16557,943,553010.88,Sin quiebre registrado
+2026-04-01,2026,4,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,14733,13797,340,532222.74,Sin quiebre registrado
+2026-04-01,2026,4,SED-11,Iquitos,Loreto,Selva,30,30,100.0,15283,15177,313,559839.16,Sin quiebre registrado
+2026-04-01,2026,4,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,12921,13337,637,479358.97,Sin quiebre registrado
+2026-05-01,2026,5,SED-01,Lima,Lima,Costa,31,31,100.0,40156,41692,900,1518147.94,Sin quiebre registrado
+2026-05-01,2026,5,SED-02,Piura,Piura,Costa,31,31,100.0,22422,21309,651,786332.29,Sin quiebre registrado
+2026-05-01,2026,5,SED-03,Trujillo,La Libertad,Costa,31,31,100.0,22627,22699,816,795179.32,Sin quiebre registrado
+2026-05-01,2026,5,SED-04,Chiclayo,Lambayeque,Costa,31,31,100.0,18286,18066,236,667088.92,Sin quiebre registrado
+2026-05-01,2026,5,SED-05,Arequipa,Arequipa,Sierra,31,31,100.0,22384,23625,661,845037.34,Sin quiebre registrado
+2026-05-01,2026,5,SED-06,Cusco,Cusco,Sierra,31,31,100.0,22703,24552,674,802300.13,Sin quiebre registrado
+2026-05-01,2026,5,SED-07,Puno,Puno,Sierra,31,31,100.0,15887,16213,624,612635.76,Sin quiebre registrado
+2026-05-01,2026,5,SED-08,Ayacucho,Ayacucho,Sierra,31,31,100.0,12473,12971,409,451216.01,Sin quiebre registrado
+2026-05-01,2026,5,SED-09,Huancayo,Junín,Sierra,31,31,100.0,15174,16677,301,573066.75,Sin quiebre registrado
+2026-05-01,2026,5,SED-10,Tarapoto,San Martín,Selva,31,31,100.0,13280,13897,503,492537.89,Sin quiebre registrado
+2026-05-01,2026,5,SED-11,Iquitos,Loreto,Selva,31,31,100.0,15608,15287,513,570089.9,Sin quiebre registrado
+2026-05-01,2026,5,SED-12,Pucallpa,Ucayali,Selva,31,31,100.0,13073,13434,451,501092.83,Sin quiebre registrado
+2026-06-01,2026,6,SED-01,Lima,Lima,Costa,30,30,100.0,43744,41991,1921,1515704.51,Sin quiebre registrado
+2026-06-01,2026,6,SED-02,Piura,Piura,Costa,30,30,100.0,21077,21462,739,770055.86,Sin quiebre registrado
+2026-06-01,2026,6,SED-03,Trujillo,La Libertad,Costa,30,30,100.0,24364,22862,1387,870682.06,Sin quiebre registrado
+2026-06-01,2026,6,SED-04,Chiclayo,Lambayeque,Costa,30,30,100.0,16689,18196,742,638800.43,Sin quiebre registrado
+2026-06-01,2026,6,SED-05,Arequipa,Arequipa,Sierra,30,30,100.0,22758,23795,916,871369.97,Sin quiebre registrado
+2026-06-01,2026,6,SED-06,Cusco,Cusco,Sierra,30,30,100.0,27327,24728,899,1000056.98,Sin quiebre registrado
+2026-06-01,2026,6,SED-07,Puno,Puno,Sierra,30,30,100.0,16569,16330,701,600340.95,Sin quiebre registrado
+2026-06-01,2026,6,SED-08,Ayacucho,Ayacucho,Sierra,30,30,100.0,12630,13064,745,460107.86,Sin quiebre registrado
+2026-06-01,2026,6,SED-09,Huancayo,Junín,Sierra,30,30,100.0,17030,16797,622,584704.46,Sin quiebre registrado
+2026-06-01,2026,6,SED-10,Tarapoto,San Martín,Selva,30,30,100.0,11930,13997,553,424718.67,Sin quiebre registrado
+2026-06-01,2026,6,SED-11,Iquitos,Loreto,Selva,30,30,100.0,15853,15397,560,584674.52,Sin quiebre registrado
+2026-06-01,2026,6,SED-12,Pucallpa,Ucayali,Selva,30,30,100.0,13638,13531,396,493003.39,Sin quiebre registrado
+2026-07-01,2026,7,SED-01,Lima,Lima,Costa,12,31,38.71,21799,20955,474,809546.73,Sin quiebre registrado
+2026-07-01,2026,7,SED-02,Piura,Piura,Costa,12,31,38.71,10406,10710,442,384487.03,Sin quiebre registrado
+2026-07-01,2026,7,SED-03,Trujillo,La Libertad,Costa,12,31,38.71,10615,11409,275,382597.32,Sin quiebre registrado
+2026-07-01,2026,7,SED-04,Chiclayo,Lambayeque,Costa,12,31,38.71,9546,9080,420,356959.2,Sin quiebre registrado
+2026-07-01,2026,7,SED-05,Arequipa,Arequipa,Sierra,12,31,38.71,10932,11874,357,396895.98,Sin quiebre registrado
+2026-07-01,2026,7,SED-06,Cusco,Cusco,Sierra,12,31,38.71,12635,12340,242,459436.27,Sin quiebre registrado
+2026-07-01,2026,7,SED-07,Puno,Puno,Sierra,12,31,38.71,8072,8149,302,285302.65,Sin quiebre registrado
+2026-07-01,2026,7,SED-08,Ayacucho,Ayacucho,Sierra,12,31,38.71,6568,6519,295,247195.4,Sin quiebre registrado
+2026-07-01,2026,7,SED-09,Huancayo,Junín,Sierra,12,31,38.71,8897,8382,249,327536.41,Sin quiebre registrado
+2026-07-01,2026,7,SED-10,Tarapoto,San Martín,Selva,12,31,38.71,6943,6985,265,258534.23,Sin quiebre registrado
+2026-07-01,2026,7,SED-11,Iquitos,Loreto,Selva,12,31,38.71,8381,7683,327,317431.71,Sin quiebre registrado
+2026-07-01,2026,7,SED-12,Pucallpa,Ucayali,Selva,12,31,38.71,6487,6752,217,250461.49,Sin quiebre registrado
