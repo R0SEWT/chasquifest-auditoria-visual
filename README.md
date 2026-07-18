@@ -1,6 +1,6 @@
 # Operación ChasquiFest — Auditoría de visualización
 
-> Cinco gráficos mintieron. Este repositorio muestra lo que los datos realmente dicen.
+> Cinco gráficos del festival, releídos desde los datos: lo que el titular decía y lo que los números sostienen.
 
 **🖥️ Dashboard en vivo:** https://r0sewt.github.io/chasquifest-auditoria-visual/
 

@@ -16,17 +16,7 @@
     --track:#ecebe6;
     --accent:#4a3aa7;
   }
-  @media (prefers-color-scheme: dark){
-    :root:where(:not([data-theme="light"])){
-      color-scheme: dark;
-      --plane:#0d0d0d; --surface:#1a1a19;
-      --ink:#fff; --ink2:#c3c2b7; --muted:#898781;
-      --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,.10);
-      --s1:#3987e5; --s2:#008300; --s3:#d55181;
-      --good:#0ca30c; --good-ink:#0ca30c; --critical:#d03b3b;
-      --track:#2c2c2a; --accent:#9085e9;
-    }
-  }
+  /* Light is the default. Dark applies only when the viewer toggles it (data-theme="dark"). */
   :root[data-theme="dark"]{
     color-scheme: dark;
     --plane:#0d0d0d; --surface:#1a1a19;
@@ -107,14 +97,18 @@
   .stack{display:flex; height:30px; border-radius:6px; overflow:hidden; gap:2px; background:var(--surface)}
   .seg{display:flex; align-items:center; justify-content:center; color:#fff; font-size:.8rem; font-weight:650; min-width:0}
   .stack-lab{font-size:.8rem; color:var(--ink2); margin:10px 0 2px; font-weight:600}
-  /* diverging */
-  .div{position:relative; margin:14px 0}
-  .zero{position:absolute; left:50%; top:-4px; bottom:-4px; width:2px; background:var(--axis)}
-  .dr{display:grid; grid-template-columns:1fr 1fr; align-items:center; height:34px; margin:8px 0}
-  .dbar{height:26px; display:flex; align-items:center; border-radius:6px; font-size:.82rem; font-weight:650; color:#fff; padding:0 9px; font-variant-numeric:tabular-nums}
-  .dbar.neg{justify-self:end; justify-content:flex-start; background:var(--critical); border-radius:6px 4px 4px 6px}
-  .dbar.pos{justify-self:start; justify-content:flex-end; background:var(--good); border-radius:4px 6px 6px 4px}
-  .dl{font-size:.8rem; color:var(--ink2); margin-bottom:4px}
+  /* comparison bars (value label always outside the bar → never clipped) */
+  .cmp{margin:6px 0}
+  .cmp-row{display:grid; grid-template-columns:minmax(112px,40%) 1fr; align-items:center; gap:12px; margin:12px 0}
+  .cmp-name{font-size:.84rem; color:var(--ink2); text-align:right; line-height:1.22}
+  .cmp-name .sub{display:block; color:var(--muted); font-size:.85em}
+  .cmp-barwrap{display:flex; align-items:center; gap:9px; min-width:0}
+  .cmp-bar{height:24px; border-radius:4px; flex:0 0 auto; min-width:3px}
+  .cmp-bar.crit{background:var(--critical)}
+  .cmp-bar.good{background:var(--good)}
+  .cmp-val{font-weight:650; font-size:.92rem; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .cmp-val.r{color:var(--critical)} .cmp-val.g{color:var(--good-ink)}
+  @media(max-width:520px){.cmp-row{grid-template-columns:1fr; gap:2px} .cmp-name{text-align:left}}
   .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:.8rem; color:var(--ink2); margin:12px 0 2px}
   .legend span{display:inline-flex; align-items:center; gap:6px}
   .dot{width:11px; height:11px; border-radius:3px; display:inline-block}
@@ -141,8 +135,8 @@
 <div class="wrap">
 <header class="top">
   <div class="eyebrow">Operación ChasquiFest · Auditoría de visualización</div>
-  <h1>Cinco gráficos <span class="em">mintieron</span>.<br>Esto es lo que dicen los datos.</h1>
-  <p class="lede">El dashboard del festival mezclaba porcentajes, escalas y ventanas temporales con entusiasmo. Cada tarjeta contrasta el <b>titular</b> que gritaba el gráfico original con la <b>realidad</b> recalculada desde el CSV.</p>
+  <h1>Cinco gráficos del festival,<br><span class="em">releídos desde los datos</span>.</h1>
+  <p class="lede">El dashboard mezclaba porcentajes, escalas y ventanas temporales. Cada tarjeta pone lado a lado el <b>titular</b> del gráfico original y la <b>lectura que sostienen los datos</b> — el mismo número, bien medido.</p>
   <div class="method">
     <b>Cómo leer esto:</b> cada afirmación numérica está recalculada y validada contra los datos en los notebooks del examen (uno por caso). Las tasas declaran numerador y denominador; ninguna asociación se presenta como causa. Datos <b>sintéticos y ficticios</b>.
   </div>
@@ -231,13 +225,15 @@
   </div>
   <div class="chart">
     <div class="ct">El mismo dato, dos denominadores — y cambia de signo</div>
-    <div class="task">Tarea: comparar magnitud absoluta vs. tasa (polaridad respecto de 0)</div>
-    <div class="div">
-      <div class="dl" style="display:grid;grid-template-columns:1fr 1fr"><span>← peor que 2025</span><span style="text-align:right">mejor que 2025 →</span></div>
-      <div style="position:relative">
-        <div class="zero"></div>
-        <div class="dr"><div style="justify-self:end"><div class="dbar neg" style="width:95%">Caída bruta −56.8%</div></div><div></div></div>
-        <div class="dr"><div></div><div style="justify-self:start"><div class="dbar pos" style="width:19%">Ritmo diario +11.5%</div></div></div>
+    <div class="task">Tarea: comparar magnitud absoluta vs. tasa · <span style="color:var(--critical)">rojo = peor</span> / <span style="color:var(--good-ink)">verde = mejor</span> que 2025</div>
+    <div class="cmp">
+      <div class="cmp-row">
+        <div class="cmp-name">Caída bruta <span class="sub">total del mes · 12 vs 31 días</span></div>
+        <div class="cmp-barwrap"><div class="cmp-bar crit" style="width:78%"></div><span class="cmp-val r">−56.8%</span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-name">Ritmo diario <span class="sub">homólogo · por día</span></div>
+        <div class="cmp-barwrap"><div class="cmp-bar good" style="width:15.8%"></div><span class="cmp-val g">+11.5%</span></div>
       </div>
     </div>
   </div>
@@ -289,12 +285,15 @@
   </div>
   <div class="chart">
     <div class="ct">La diferencia antes/después según qué se compara</div>
-    <div class="task">Tarea: comparar el "efecto" bruto vs. controlado (polaridad respecto de 0)</div>
-    <div class="div">
-      <div style="position:relative">
-        <div class="zero"></div>
-        <div class="dr"><div></div><div style="justify-self:start"><div class="dbar pos" style="width:95%">Comparación ingenua (todo) +100%</div></div></div>
-        <div class="dr"><div style="justify-self:end"><div class="dbar neg" style="width:12%">Solo sedes ya abiertas −13%</div></div><div></div></div>
+    <div class="task">Tarea: comparar el "efecto" bruto vs. controlado · <span style="color:var(--good-ink)">verde = sube</span> / <span style="color:var(--critical)">rojo = baja</span></div>
+    <div class="cmp">
+      <div class="cmp-row">
+        <div class="cmp-name">Comparación ingenua <span class="sub">todas las filas</span></div>
+        <div class="cmp-barwrap"><div class="cmp-bar good" style="width:78%"></div><span class="cmp-val g">+100%</span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cmp-name">Solo sedes ya abiertas <span class="sub">controlando aperturas</span></div>
+        <div class="cmp-barwrap"><div class="cmp-bar crit" style="width:10.1%"></div><span class="cmp-val r">−13%</span></div>
       </div>
     </div>
   </div>
@@ -318,7 +317,7 @@
 <script>
 (function(){
   var root=document.documentElement, btn=document.getElementById('themeBtn');
-  function cur(){ return root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'); }
+  function cur(){ return root.getAttribute('data-theme') || 'light'; }
   try{ var s=localStorage.getItem('cf-theme'); if(s) root.setAttribute('data-theme',s); }catch(e){}
   btn.addEventListener('click', function(){
     var n = cur()==='dark' ? 'light':'dark';
